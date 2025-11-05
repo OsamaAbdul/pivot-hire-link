@@ -17,9 +17,8 @@ const RoleSelection = ({ userId, onRoleSelected }: RoleSelectionProps) => {
     setLoading(true);
     try {
       const { error } = await supabase
-        .from("profiles")
-        .update({ role })
-        .eq("id", userId);
+        .from("user_roles")
+        .insert({ user_id: userId, role });
 
       if (error) throw error;
 

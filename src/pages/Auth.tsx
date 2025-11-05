@@ -57,10 +57,17 @@ const Auth = () => {
         if (error) throw error;
 
         if (data.user) {
-          // Update profile with role
+          // Insert role into user_roles table
+          const { error: roleError } = await supabase
+            .from("user_roles")
+            .insert({ user_id: data.user.id, role });
+
+          if (roleError) throw roleError;
+          
+          // Update profile with full name
           const { error: profileError } = await supabase
             .from("profiles")
-            .update({ role, full_name: fullName })
+            .update({ full_name: fullName })
             .eq("id", data.user.id);
 
           if (profileError) throw profileError;

@@ -47,7 +47,15 @@ const Dashboard = () => {
         .single();
 
       if (error) throw error;
-      setProfile(profileData);
+
+      // Fetch user role from user_roles table
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .maybeSingle();
+
+      setProfile({ ...profileData, role: roleData?.role });
     } catch (error: any) {
       console.error("Error fetching profile:", error);
       toast.error("Failed to load profile");
