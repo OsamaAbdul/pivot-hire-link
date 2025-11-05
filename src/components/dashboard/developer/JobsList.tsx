@@ -30,8 +30,10 @@ const JobsList = ({ developerId }: JobsListProps) => {
         .from("jobs")
         .select(`
           *,
-          profiles:recruiter_id (full_name),
-          recruiter_profiles:recruiter_profiles!recruiter_profiles_user_id_fkey (company_name)
+          profiles:recruiter_id (
+            full_name,
+            recruiter_profiles!recruiter_profiles_user_id_fkey (company_name)
+          )
         `)
         .eq("is_active", true)
         .order("created_at", { ascending: false });
@@ -98,7 +100,7 @@ const JobsList = ({ developerId }: JobsListProps) => {
                     <CardTitle className="text-xl font-serif">{job.title}</CardTitle>
                     <CardDescription className="flex items-center gap-2 mt-2">
                       <span className="font-medium">
-                        {job.recruiter_profiles?.[0]?.company_name || "Company"}
+                        {job.profiles?.recruiter_profiles?.[0]?.company_name || "Company"}
                       </span>
                     </CardDescription>
                   </div>

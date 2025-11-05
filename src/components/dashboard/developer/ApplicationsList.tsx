@@ -25,8 +25,10 @@ const ApplicationsList = ({ developerId }: ApplicationsListProps) => {
           *,
           jobs:job_id (
             *,
-            profiles:recruiter_id (full_name),
-            recruiter_profiles:recruiter_profiles!recruiter_profiles_user_id_fkey (company_name)
+            profiles:recruiter_id (
+              full_name,
+              recruiter_profiles!recruiter_profiles_user_id_fkey (company_name)
+            )
           )
         `)
         .eq("developer_id", developerId)
@@ -87,7 +89,7 @@ const ApplicationsList = ({ developerId }: ApplicationsListProps) => {
                     {application.jobs.title}
                   </CardTitle>
                   <p className="text-sm text-muted-foreground">
-                    {application.jobs.recruiter_profiles?.[0]?.company_name || "Company"}
+                    {application.jobs.profiles?.recruiter_profiles?.[0]?.company_name || "Company"}
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
