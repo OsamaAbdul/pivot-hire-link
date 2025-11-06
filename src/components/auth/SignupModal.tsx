@@ -15,6 +15,8 @@ type SignupModalProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+
+
 export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
   const navigate = useNavigate();
   const [roleUI, setRoleUI] = useState<RoleUI>("talent");
@@ -26,6 +28,8 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+
+
   // Accessibility: focus management on open
   useEffect(() => {
     if (open) setError(null);
@@ -34,7 +38,12 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
   const handleGoogleAuth = async () => {
     setLoading(true);
     try {
-      const { error } = await supabase.auth.signInWithOAuth({ provider: "google" });
+      const { error } = await supabase.auth.signInWithOAuth({ 
+        provider: "google",
+        options: {
+          redirectTo: "http://localhost:8081",
+        }
+      });
       if (error) throw error;
     } catch (err: any) {
       setError(err?.message || "Google sign-in failed.");
@@ -96,7 +105,7 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
 
       onOpenChange(false);
       // After signup, direct users to login via the route-driven modal
-      navigate("/auth");
+      navigate("/dashboard");
     } catch (err: any) {
       setError(err?.message || "Sign up failed. Please try again.");
     } finally {
