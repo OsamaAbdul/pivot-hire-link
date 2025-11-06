@@ -27,7 +27,7 @@ const Index = () => {
             <Link to="/auth?mode=signup">Apply Now</Link>
           </Button>
           <Button asChild size="lg" variant="outline" className="px-8 border-2 border-accent">
-            <Link to="#partners">Become a Partner</Link>
+            <Link to="/partners/apply">Become a Partner</Link>
           </Button>
         </div>
       </section>

@@ -18,10 +18,13 @@ const Dashboard = () => {
   useEffect(() => {
     checkUser();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (!session) {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      // Avoid redirecting on INITIAL_SESSION when session may be null during hydration.
+      if (event === "SIGNED_OUT") {
         navigate("/auth");
-      } else {
+        return;
+      }
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
         checkUser();
       }
     });
