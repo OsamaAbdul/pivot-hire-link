@@ -1,129 +1,151 @@
 import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Link } from "react-router-dom";
-import logo from "@/assets/nfc-logo.jpg";
+import { Users, Megaphone, Wrench, Lightbulb, TrendingUp, UsersRound } from "lucide-react";
+import Navbar from "@/components/layout/Navbar";
+import Footer from "@/components/layout/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="border-b border-border bg-card/50 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-3">
-            <img src={logo} alt="NFC Logo" className="w-12 h-12 rounded-full object-cover" />
-            <div>
-              <h2 className="font-serif font-bold text-lg text-foreground">Northern Founders</h2>
-              <p className="text-sm text-muted-foreground">Community</p>
-            </div>
-          </div>
-          <div className="flex gap-3">
-            <Button variant="ghost" asChild>
-              <Link to="/auth">Sign In</Link>
-            </Button>
-            <Button asChild>
-              <Link to="/auth?mode=signup">Get Started</Link>
-            </Button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
-      {/* Hero Section */}
-      <section className="container mx-auto px-6 py-20 md:py-32">
-        <div className="max-w-4xl mx-auto text-center space-y-8">
-          <div className="space-y-4">
-            <p className="text-xl md:text-2xl text-muted-foreground font-light">
-              Hey, it's
-            </p>
-            <h1 className="text-6xl md:text-8xl font-bold text-primary leading-tight">
-              YOUR PLATFORM
-            </h1>
-          </div>
-          
-          <div className="bg-primary text-primary-foreground py-16 px-8 md:px-16 rounded-lg transform -skew-y-2 shadow-xl">
-            <div className="transform skew-y-2 space-y-6">
-              <h2 className="text-3xl md:text-4xl font-serif font-bold">
-                Connecting Talent with Opportunity
-              </h2>
-              <p className="text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                The platform where developers showcase their skills and recruiters discover the perfect talent for their teams
-              </p>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-            <Button size="lg" asChild className="text-lg px-8">
-              <Link to="/auth?mode=signup&role=developer">I'm a Developer</Link>
-            </Button>
-            <Button size="lg" variant="outline" asChild className="text-lg px-8">
-              <Link to="/auth?mode=signup&role=recruiter">I'm a Recruiter</Link>
-            </Button>
-          </div>
+      {/* Hero */}
+      <section className="container mx-auto px-6 pt-16 pb-12 md:pt-24 md:pb-20 text-center">
+        <h1 className="font-serif font-extrabold tracking-tight text-5xl md:text-7xl lg:text-8xl leading-tight">
+          Discover and Empower
+          <br />
+          Northern Talent.
+        </h1>
+        <p className="mt-6 max-w-3xl mx-auto text-muted-foreground text-base md:text-lg">
+          Connecting aspiring individuals from the North with the mentors and investors who can help them thrive.
+        </p>
+        <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+          <Button asChild size="lg" className="px-8 ">
+            <Link to="/auth?mode=signup">Apply Now</Link>
+          </Button>
+          <Button asChild size="lg" variant="outline" className="px-8 border-2 border-accent">
+            <Link to="#partners">Become a Partner</Link>
+          </Button>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="bg-card py-20">
-        <div className="container mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-            <div className="space-y-4">
-              <h3 className="text-3xl font-serif font-bold text-primary">For Developers</h3>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Build and showcase your professional profile</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Upload your resume and highlight your skills</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Browse and apply for exciting opportunities</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Track your applications in real-time</span>
-                </li>
-              </ul>
-            </div>
-
-            <div className="space-y-4">
-              <h3 className="text-3xl font-serif font-bold text-primary">For Recruiters</h3>
-              <ul className="space-y-3 text-muted-foreground">
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Post job openings and freelance gigs</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Search developers by skills and experience</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Review applications and manage candidates</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-accent mt-1">●</span>
-                  <span>Connect directly with top talent</span>
-                </li>
-              </ul>
-            </div>
-          </div>
+      {/* Programs */}
+      <section id="programs" className="container mx-auto px-6 py-10 md:py-16">
+        <h2 className="text-center text-2xl md:text-3xl font-serif font-bold">Our Programs</h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-md bg-muted text-foreground">
+                  <Users className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold">Mentorship Programs</p>
+                  <p className="text-sm text-muted-foreground">Gain invaluable guidance from industry experts and seasoned entrepreneurs.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-md bg-muted text-foreground">
+                  <Megaphone className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold">Investor Pitch Nights</p>
+                  <p className="text-sm text-muted-foreground">Present your innovative ideas to a network of active investors and VCs.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="p-3 rounded-md bg-muted text-foreground">
+                  <Wrench className="h-5 w-5 text-accent" />
+                </div>
+                <div>
+                  <p className="font-semibold">Skill-Building Workshops</p>
+                  <p className="text-sm text-muted-foreground">Enhance your capabilities with targeted workshops on tech, business, and design.</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="bg-primary text-primary-foreground py-12">
-        <div className="container mx-auto px-6 text-center space-y-4">
-          <div className="flex items-center justify-center gap-3">
-            <img src={logo} alt="NFC Logo" className="w-10 h-10 rounded-full object-cover" />
-            <div className="text-left">
-              <h3 className="font-serif font-bold">Northern Founders Community</h3>
-              <p className="text-sm opacity-80">Building connections, creating opportunities</p>
-            </div>
-          </div>
-          <p className="text-sm opacity-70">© 2025 Northern Founders Community. All rights reserved.</p>
+      {/* Featured Talents */}
+      <section className="container mx-auto px-6 py-10 md:py-16">
+        <h2 className="text-center text-2xl md:text-3xl font-serif font-bold">Featured Talents</h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-4">
+          {[
+            { name: "Aisha Bello", role: "Fintech Innovator" },
+            { name: "Chinedu Okoro", role: "AI Specialist" },
+            { name: "Musa Ibrahim", role: "SaaS Founder" },
+            { name: "Fatima Garba", role: "UX Designer" },
+          ].map((t, i) => (
+            <Card key={i} className="text-center">
+              <CardContent className="p-6 space-y-4">
+                <div className="mx-auto h-24 w-24 rounded-full ring-2 ring-accent overflow-hidden">
+                  <Avatar className="h-24 w-24">
+                    <AvatarImage
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(t.name)}`}
+                      alt={`${t.name} avatar`}
+                      loading="lazy"
+                    />
+                    <AvatarFallback>{t.name.split(" ")[0].charAt(0)}</AvatarFallback>
+                  </Avatar>
+                </div>
+                <div>
+                  <p className="font-semibold">{t.name}</p>
+                  <p className="text-xs text-muted-foreground">{t.role}</p>
+                </div>
+                <Link to="#" className="text-xs text-accent hover:underline">View Profile →</Link>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-      </footer>
+      </section>
+
+      {/* Foundation Goals */}
+      <section className="container mx-auto px-6 py-10 md:py-16">
+        <h2 className="text-center text-2xl md:text-3xl font-serif font-bold">Our Foundation's Goals</h2>
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          <Card>
+            <CardContent className="p-6 text-center space-y-3">
+              <div className="mx-auto p-3 rounded-full bg-muted w-12 h-12 flex items-center justify-center">
+                <Lightbulb className="h-6 w-6 text-accent" />
+              </div>
+              <p className="font-semibold">Fostering Innovation</p>
+              <p className="text-sm text-muted-foreground">Nurturing groundbreaking ideas and providing resources for them to flourish.</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center space-y-3">
+              <div className="mx-auto p-3 rounded-full bg-muted w-12 h-12 flex items-center justify-center">
+                <UsersRound className="h-6 w-6 text-accent" />
+              </div>
+              <p className="font-semibold">Building Community</p>
+              <p className="text-sm text-muted-foreground">Creating a strong, supportive network of founders, mentors, and investors.</p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6 text-center space-y-3">
+              <div className="mx-auto p-3 rounded-full bg-muted w-12 h-12 flex items-center justify-center">
+                <TrendingUp className="h-6 w-6 text-accent" />
+              </div>
+              <p className="font-semibold">Driving Regional Growth</p>
+              <p className="text-sm text-muted-foreground">Empowering local talent to build sustainable businesses and boost the economy.</p>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <Footer />
     </div>
   );
 };

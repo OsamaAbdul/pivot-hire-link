@@ -49,41 +49,50 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 193 51% 17%;
-    --foreground: 28 45% 85%;
+    /* Exact replica colors approximated from reference screenshot */
+    /* Background: #0C2433 (HSL ~ 205, 60%, 12%) */
+    --background: 205 60% 12%;
+    /* Foreground text: #E6F0F6 (HSL ~ 205, 50%, 91%) */
+    --foreground: 205 50% 91%;
 
-    --card: 193 45% 22%;
-    --card-foreground: 28 45% 85%;
+    /* Card panels: #122A3A (HSL ~ 205, 50%, 16%) */
+    --card: 205 50% 16%;
+    --card-foreground: 205 50% 91%;
 
-    --popover: 193 45% 22%;
-    --popover-foreground: 28 45% 85%;
+    /* Popover surfaces similar to card */
+    --popover: 205 50% 16%;
+    --popover-foreground: 205 50% 91%;
 
-    --primary: 28 45% 85%;
-    --primary-foreground: 193 51% 17%;
+    /* Primary accent (Apply button mint): #21E6A9 (HSL ~ 160, 78%, 52%) */
+    --primary: 160 78% 52%;
+    --primary-foreground: 205 60% 12%;
 
-    --secondary: 193 35% 30%;
-    --secondary-foreground: 28 45% 85%;
+    /* Secondary muted panels and badges */
+    --secondary: 205 40% 20%;
+    --secondary-foreground: 205 50% 91%;
 
-    --muted: 193 35% 30%;
-    --muted-foreground: 28 30% 65%;
+    /* Muted text/background for descriptions: #2A4B61 (HSL ~ 205, 39%, 27%) */
+    --muted: 205 39% 27%;
+    --muted-foreground: 205 22% 70%;
 
-    --accent: 28 35% 75%;
-    --accent-foreground: 193 51% 17%;
+    /* Accent used for outlines and icons close to primary */
+    --accent: 160 70% 48%;
+    --accent-foreground: 205 60% 12%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 28 45% 85%;
+    /* Borders/input lines: #1B3C50 (HSL ~ 205, 45%, 22%) */
+    --border: 205 45% 22%;
+    --input: 205 45% 22%;
+    --ring: 160 70% 48%;
 
-    --border: 193 35% 30%;
-    --input: 193 35% 30%;
-    --ring: 28 45% 85%;
-    --sidebar-background: 193 45% 22%;
-    --sidebar-foreground: 28 45% 85%;
-    --sidebar-primary: 28 45% 85%;
-    --sidebar-primary-foreground: 193 51% 17%;
-    --sidebar-accent: 193 35% 30%;
-    --sidebar-accent-foreground: 28 45% 85%;
-    --sidebar-border: 193 35% 30%;
-    --sidebar-ring: 28 45% 85%;
+    /* Sidebar palette aligned with dark panels */
+    --sidebar-background: 205 50% 16%;
+    --sidebar-foreground: 205 50% 91%;
+    --sidebar-primary: 160 78% 52%;
+    --sidebar-primary-foreground: 205 60% 12%;
+    --sidebar-accent: 205 39% 27%;
+    --sidebar-accent-foreground: 205 50% 91%;
+    --sidebar-border: 205 45% 22%;
+    --sidebar-ring: 160 70% 48%;
   }
 }
 
@@ -98,7 +107,19 @@ All colors MUST be HSL.
     @apply bg-background text-foreground font-sans;
   }
 
+  /* Headings in the reference use a bold geometric sans */
   h1, h2, h3, h4, h5, h6 {
-    @apply font-serif;
+    @apply font-sans;
+  }
+}
+
+/* Utility: hide scrollbars while preserving scroll */
+@layer utilities {
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
   }
 }

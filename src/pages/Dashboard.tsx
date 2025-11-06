@@ -7,7 +7,7 @@ import { Loader2 } from "lucide-react";
 import DeveloperDashboard from "@/components/dashboard/DeveloperDashboard";
 import RecruiterDashboard from "@/components/dashboard/RecruiterDashboard";
 import RoleSelection from "@/components/dashboard/RoleSelection";
-import logo from "@/assets/nfc-logo.jpg";
+import logo from "@/assets/nfclogo.jpg";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -94,7 +94,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <img src={logo} alt="NFC Logo" className="w-12 h-12 rounded-full object-cover" />
             <div>
-              <h2 className="font-serif font-bold text-lg text-foreground">Northern Founders</h2>
+              <h2 className="font-serif font-bold text-lg text-foreground">NFC Talents</h2>
               <p className="text-sm text-muted-foreground">
                 {profile?.role === "developer" ? "Developer Dashboard" : "Recruiter Dashboard"}
               </p>

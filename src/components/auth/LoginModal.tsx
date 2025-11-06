@@ -1,0 +1,114 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Loader2, Eye, EyeOff } from "lucide-react";
+import logo from "@/assets/nfclogo.jpg";
+
+type LoginModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+// Pixel-perfect login modal modeled on the provided reference
+export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      onOpenChange(false);
+      navigate("/");
+    } catch (err: any) {
+      setError(err?.message || "Login failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="w-full max-w-md max-h-[85vh] overflow-y-auto no-scrollbar rounded-[var(--radius)] border border-border bg-card p-6 shadow-lg">
+        {/* Brand */}
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <img src={logo} alt="Northern Founders logo" className="w-7 h-7 rounded-sm object-cover" />
+          <span className="text-sm font-medium tracking-wide">NFC Talents</span>
+        </div>
+
+        <DialogHeader className="text-center space-y-2">
+          <DialogTitle className="text-2xl md:text-3xl font-semibold">Welcome Back</DialogTitle>
+          <p className="text-sm text-muted-foreground">Log in to access the community platform.</p>
+        </DialogHeader>
+
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="login-email" className="text-sm">Email</Label>
+            <Input
+              id="login-email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              aria-invalid={!!error}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="login-password" className="text-sm">Password</Label>
+              <a href="#" className="text-xs text-accent hover:underline">Forgot Password?</a>
+            </div>
+            <div className="relative">
+              <Input
+                id="login-password"
+                type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                minLength={6}
+                aria-invalid={!!error}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                aria-label={showPassword ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
+            </div>
+          </div>
+
+          {error ? (
+            <p className="text-xs text-destructive-foreground bg-destructive/10 border border-destructive rounded-md px-3 py-2">
+              {error}
+            </p>
+          ) : null}
+
+          <Button type="submit" disabled={loading} className="w-full bg-primary text-primary-foreground hover:bg-[hsl(160,78%,48%)]">
+            {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Log In
+          </Button>
+        </form>
+
+        <p className="mt-4 text-center text-xs text-muted-foreground">
+          Don't have an account? <a href="/auth?mode=signup" className="text-accent hover:underline">Sign Up</a>
+        </p>
+      </DialogContent>
+    </Dialog>
+  );
+}
