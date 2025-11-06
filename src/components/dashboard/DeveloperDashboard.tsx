@@ -13,6 +13,7 @@ import DashboardShell from "./talent/DashboardShell";
 import DashboardHome from "./talent/DashboardHome";
 import MessagesSection from "./talent/MessagesSection";
 import RightAsidePanels from "./talent/RightAsidePanels";
+import RecommendedJobs from "./developer/RecommendedJobs";
 
 interface DeveloperDashboardProps {
   profile: any;
@@ -102,6 +103,12 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
         <>
           <DashboardHome name={profile.full_name || "Developer"} />
           {HomePanels}
+          <div className="mt-6">
+            <RecommendedJobs 
+              developerId={profile.id} 
+              developerSkills={developerProfile?.skills || []} 
+            />
+          </div>
         </>
       )}
       {activeSection === "messages" && <MessagesSection />}
