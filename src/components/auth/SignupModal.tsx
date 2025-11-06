@@ -41,7 +41,7 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
       const { error } = await supabase.auth.signInWithOAuth({ 
         provider: "google",
         options: {
-          redirectTo: "http://localhost:8081",
+          redirectTo: "http://localhost:8080",
         }
       });
       if (error) throw error;

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -8,6 +9,10 @@ import { Briefcase, FileText, User } from "lucide-react";
 import DeveloperProfile from "./developer/DeveloperProfile";
 import JobsList from "./developer/JobsList";
 import ApplicationsList from "./developer/ApplicationsList";
+import DashboardShell from "./talent/DashboardShell";
+import DashboardHome from "./talent/DashboardHome";
+import MessagesSection from "./talent/MessagesSection";
+import RightAsidePanels from "./talent/RightAsidePanels";
 
 interface DeveloperDashboardProps {
   profile: any;
@@ -16,6 +21,10 @@ interface DeveloperDashboardProps {
 const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
   const [developerProfile, setDeveloperProfile] = useState<any>(null);
   const [stats, setStats] = useState({ applications: 0, pending: 0, approved: 0 });
+  const location = useLocation();
+  const navigate = useNavigate();
+  const searchParams = new URLSearchParams(location.search);
+  const activeSection = (searchParams.get("section") || "dashboard").toLowerCase();
 
   useEffect(() => {
     fetchDeveloperProfile();
@@ -47,15 +56,14 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
     }
   };
 
-  return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-serif font-bold">Welcome back, {profile.full_name || "Developer"}!</h1>
-          <p className="text-muted-foreground">Manage your profile and track your applications</p>
-        </div>
-      </div>
+  const handleSelect = (key: string) => {
+    const sp = new URLSearchParams(location.search);
+    sp.set("section", key);
+    navigate({ search: sp.toString() }, { replace: true });
+  };
 
+  const HomePanels = (
+    <>
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -66,7 +74,6 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
             <div className="text-2xl font-bold">{stats.applications}</div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Pending</CardTitle>
@@ -76,7 +83,6 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
             <div className="text-2xl font-bold">{stats.pending}</div>
           </CardContent>
         </Card>
-
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Approved</CardTitle>
@@ -87,31 +93,52 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
           </CardContent>
         </Card>
       </div>
+    </>
+  );
 
-      <Tabs defaultValue="jobs" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="jobs">Browse Jobs</TabsTrigger>
-          <TabsTrigger value="applications">My Applications</TabsTrigger>
-          <TabsTrigger value="profile">My Profile</TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="jobs">
-          <JobsList developerId={profile.id} />
-        </TabsContent>
-
-        <TabsContent value="applications">
-          <ApplicationsList developerId={profile.id} />
-        </TabsContent>
-
-        <TabsContent value="profile">
-          <DeveloperProfile 
-            profile={profile} 
-            developerProfile={developerProfile}
-            onUpdate={fetchDeveloperProfile}
-          />
-        </TabsContent>
-      </Tabs>
-    </div>
+  return (
+    <DashboardShell active={activeSection} onSelect={handleSelect} rightAside={<RightAsidePanels />}>
+      {activeSection === "dashboard" && (
+        <>
+          <DashboardHome name={profile.full_name || "Developer"} />
+          {HomePanels}
+        </>
+      )}
+      {activeSection === "messages" && <MessagesSection />}
+      {activeSection === "profile" && (
+        <DeveloperProfile 
+          profile={profile} 
+          developerProfile={developerProfile}
+          onUpdate={fetchDeveloperProfile}
+        />
+      )}
+      {activeSection === "challenges" && (
+        <Tabs defaultValue="jobs" className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="jobs">Browse Jobs</TabsTrigger>
+            <TabsTrigger value="applications">My Applications</TabsTrigger>
+          </TabsList>
+          <TabsContent value="jobs">
+            <JobsList developerId={profile.id} />
+          </TabsContent>
+          <TabsContent value="applications">
+            <ApplicationsList developerId={profile.id} />
+          </TabsContent>
+        </Tabs>
+      )}
+      {activeSection === "settings" && (
+        <div className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground">Settings will be available soon.</p>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+    </DashboardShell>
   );
 };
 

@@ -13,10 +13,6 @@ type LoginModalProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-
-
-
-
 export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -49,7 +45,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
           const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-              redirectTo: "http://localhost:8081",
+              redirectTo: "http://localhost:8080",
             },
           });
           if (error) throw error;

@@ -9,7 +9,7 @@ const Footer = () => {
           <p className="nf-copy">© 2024 Northern Founders Community. All rights reserved.</p>
           <nav aria-label="Footer navigation">
             <div className="nf-group" aria-label="Social links">
-              <a href="https://x.com/nfcommunity_?lang=en" target="_blank" rel="noopener noreferrer">Twitter</a>
+              <a href="https://x.com/nfcommunity_?lang=en" target="_blank" rel="noopener noreferrer">X</a>
               <a href="https://ng.linkedin.com/company/northern-founders-community" target="_blank" rel="noopener noreferrer">LinkedIn</a>
               <a href="https://www.instagram.com/northernfounderscommunity_/?hl=en" target="_blank" rel="noopener noreferrer">Instagram</a>
               <a href="mailto:contact@northernfounders.org">Contact</a>

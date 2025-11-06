@@ -1,0 +1,23 @@
+/* Talent Dashboard specific tweaks aligning with the dark reference design */
+
+.dashboard-panel-shadow {
+  box-shadow: 0 0 0 1px hsl(var(--border) / 0.6), 0 8px 24px hsl(205 60% 8% / 0.6);
+}
+
+.dashboard-hover-card:hover {
+  background-color: hsl(var(--secondary) / 0.35);
+}
+
+/* Button micro-interaction */
+.mint-button {
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.mint-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px hsl(160 70% 40% / 0.35);
+}
+
+/* Subtle rounded chips */
+.chip {
+  border-radius: 10px;
+}
