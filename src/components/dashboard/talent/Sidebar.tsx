@@ -1,26 +1,30 @@
 import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
-import { Home, Trophy, User, Settings, MessageSquare } from "lucide-react";
+import { Home, Briefcase, User, Settings, MessageSquare } from "lucide-react";
 
 interface SidebarProps {
   active: string;
   onSelect: (key: string) => void;
+  inMobile?: boolean;
 }
 
 const items = [
   { key: "dashboard", label: "Dashboard", icon: Home },
-  { key: "challenges", label: "Challenges", icon: Trophy },
+  { key: "job", label: "Jobs", icon: Briefcase },
   { key: "profile", label: "My Profile", icon: User },
   { key: "settings", label: "Settings", icon: Settings },
   { key: "messages", label: "Messages", icon: MessageSquare },
 ];
 
-export default function Sidebar({ active, onSelect }: SidebarProps) {
+export default function Sidebar({ active, onSelect, inMobile = false }: SidebarProps) {
   const location = useLocation();
 
   return (
     <aside
-      className="bg-sidebar-background/100 text-sidebar-foreground w-[240px] shrink-0 border-r border-sidebar-border p-3 hidden md:block"
+      className={cn(
+        "bg-sidebar-background/100 text-sidebar-foreground border-sidebar-border p-3",
+        inMobile ? "block w-full border-0" : "w-[240px] shrink-0 border-r hidden md:block",
+      )}
       aria-label="Dashboard navigation"
     >
       <nav className="space-y-1">

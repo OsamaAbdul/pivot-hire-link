@@ -42,6 +42,7 @@ const Navbar = () => {
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
             
+            <Link to="/jobs" className="hover:text-foreground">Jobs</Link>
             <Link to="/talents" className="hover:text-foreground">Talents</Link>
             <Link to="/about" className="hover:text-foreground">About Us</Link>
             <Link to="/partners" className="hover:text-foreground">Partners</Link>
@@ -84,6 +85,9 @@ const Navbar = () => {
               </button>
             </div>
             <nav className="flex flex-col gap-1 p-4 text-sm">
+              <Link to="/jobs" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                Jobs
+              </Link>
               <Link to="/talents" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
                 Talents
               </Link>

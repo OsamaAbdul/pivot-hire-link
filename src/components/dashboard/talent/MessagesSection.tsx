@@ -1,9 +1,11 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search, Send } from "lucide-react";
+import ChatModal, { ChatMessage } from "@/components/messaging/ChatModal";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Thread = {
   id: string;
@@ -25,7 +27,26 @@ export default function MessagesSection() {
   const [threads, setThreads] = useState<Thread[]>(initialThreads);
   const [query, setQuery] = useState("");
   const [activeId, setActiveId] = useState<string>(initialThreads[0].id);
-  const [composer, setComposer] = useState("");
+  const [chatOpen, setChatOpen] = useState<boolean>(false);
+  const [chatScrollPositions, setChatScrollPositions] = useState<Record<string, number>>({});
+  const contactListRef = useRef<HTMLUListElement | null>(null);
+  const contactBtnRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const contactListScrollTopRef = useRef<number>(0);
+  const [composerInline, setComposerInline] = useState("");
+  const isMobile = useIsMobile();
+  const largeChatRef = useRef<HTMLDivElement | null>(null);
+
+  const [messagesByThread, setMessagesByThread] = useState<Record<string, ChatMessage[]>>(() => {
+    const now = Date.now();
+    const byId: Record<string, ChatMessage[]> = {};
+    initialThreads.forEach((t, idx) => {
+      byId[t.id] = [
+        { id: `${t.id}-m1`, author: "them", content: t.lastMessage, timestamp: now - (idx + 1) * 60000 },
+        { id: `${t.id}-m2`, author: "me", content: "Sounds great — let’s proceed.", timestamp: now - idx * 30000 },
+      ];
+    });
+    return byId;
+  });
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase();
@@ -33,22 +54,48 @@ export default function MessagesSection() {
   }, [threads, query]);
 
   useEffect(() => {
-    // When a thread becomes active, mark unread as seen
     setThreads(prev => prev.map(t => (t.id === activeId ? { ...t, unread: 0 } : t)));
   }, [activeId]);
 
   const activeThread = threads.find(t => t.id === activeId) || threads[0];
 
-  const handleSend = () => {
-    if (!composer.trim()) return;
-    // Simulate message append by updating lastMessage and clearing input
-    setThreads(prev => prev.map(t => (t.id === activeId ? { ...t, lastMessage: composer.trim() } : t)));
-    setComposer("");
+  const openChatFor = (id: string) => {
+    contactListScrollTopRef.current = contactListRef.current?.scrollTop ?? 0;
+    setActiveId(id);
+    if (isMobile) {
+      setChatOpen(true);
+    }
   };
+
+  const handleSend = (text: string) => {
+    const now = Date.now();
+    setMessagesByThread(prev => ({
+      ...prev,
+      [activeId]: [...(prev[activeId] || []), { id: `${activeId}-${now}`, author: "me", content: text, timestamp: now }],
+    }));
+    setThreads(prev => prev.map(t => (t.id === activeId ? { ...t, lastMessage: text } : t)));
+  };
+
+  const handleBack = () => {
+    setChatOpen(false);
+    requestAnimationFrame(() => {
+      const btn = contactBtnRefs.current[activeId];
+      if (btn) btn.focus();
+      const list = contactListRef.current;
+      if (list) list.scrollTop = contactListScrollTopRef.current;
+    });
+  };
+
+  useEffect(() => {
+    if (isMobile) return; // modal handles its own scroll
+    const el = largeChatRef.current;
+    if (!el) return;
+    // Auto-scroll to bottom when new messages arrive
+    el.scrollTop = el.scrollHeight;
+  }, [messagesByThread[activeThread.id]?.length, isMobile]);
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-      {/* Threads list */}
       <Card className="overflow-hidden">
         <CardHeader className="pb-2">
           <CardTitle className="text-base">Messages</CardTitle>
@@ -64,16 +111,22 @@ export default function MessagesSection() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          <ul role="list" className="divide-y divide-border max-h-[520px] overflow-y-auto no-scrollbar">
+          <ul
+            ref={contactListRef}
+            role="list"
+            aria-label="Contact list"
+            className="divide-y divide-border max-h-[520px] overflow-y-auto no-scrollbar"
+          >
             {filtered.map((t) => {
               const isActive = t.id === activeId;
               return (
                 <li key={t.id}>
                   <button
+                    ref={(el) => (contactBtnRefs.current[t.id] = el)}
                     className={`w-full text-left p-4 flex items-start gap-3 transition-colors ${
                       isActive ? "bg-card" : "hover:bg-secondary/40"
                     }`}
-                    onClick={() => setActiveId(t.id)}
+                    onClick={() => openChatFor(t.id)}
                     aria-current={isActive ? "true" : undefined}
                   >
                     <div className="relative">
@@ -101,35 +154,69 @@ export default function MessagesSection() {
           </ul>
         </CardContent>
       </Card>
-
-      {/* Active thread / composer */}
-      <Card className="flex flex-col">
-        <CardHeader>
-          <CardTitle className="text-base">{activeThread?.name}</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 space-y-4">
-          <div className="space-y-3">
-            <div className="rounded-md bg-secondary/40 p-3 max-w-[70%]">{activeThread?.lastMessage}</div>
-            <div className="rounded-md bg-primary/20 p-3 max-w-[70%] ml-auto">Sounds great — let’s proceed.</div>
-          </div>
-          <div className="mt-6 border-t border-border pt-4">
-            <label htmlFor="composer" className="sr-only">Compose message</label>
-            <div className="flex gap-3 items-end">
-              <Input
-                id="composer"
-                value={composer}
-                onChange={(e) => setComposer(e.target.value)}
-                placeholder="Type your message..."
-                className="bg-background/70"
-              />
-              <Button onClick={handleSend} className="gap-2" aria-label="Send message">
-                <Send className="h-4 w-4" />
-                Send
-              </Button>
+      {/* Large screens: inline chat (maintain previous two-pane design) */}
+      <div className="hidden lg:block">
+        <Card className="flex flex-col">
+          <CardHeader>
+            <CardTitle className="text-base">{activeThread?.name}</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 space-y-4">
+            <div ref={largeChatRef} className="space-y-3 max-h-[520px] overflow-y-auto no-scrollbar pr-1">
+              {(messagesByThread[activeThread.id] || []).map((m) => (
+                <div
+                  key={m.id}
+                  className={
+                    m.author === "me"
+                      ? "rounded-md bg-primary/20 p-3 max-w-[70%] ml-auto"
+                      : "rounded-md bg-secondary/40 p-3 max-w-[70%]"
+                  }
+                >
+                  {m.content}
+                </div>
+              ))}
             </div>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="mt-6 border-t border-border pt-4">
+              <label htmlFor="composer-inline" className="sr-only">Compose message</label>
+              <div className="flex gap-3 items-end">
+                <Input
+                  id="composer-inline"
+                  value={composerInline}
+                  onChange={(e) => setComposerInline(e.target.value)}
+                  placeholder="Type your message..."
+                  className="bg-background/70"
+                />
+                <Button
+                  onClick={() => {
+                    if (!composerInline.trim()) return;
+                    handleSend(composerInline.trim());
+                    setComposerInline("");
+                  }}
+                  className="gap-2"
+                  aria-label="Send message"
+                >
+                  <Send className="h-4 w-4" />
+                  Send
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Mobile: modal chat */}
+      <div className="lg:hidden">
+        <ChatModal
+          key={activeThread.id}
+          open={chatOpen}
+          onOpenChange={(o) => setChatOpen(o)}
+          thread={{ id: activeThread.id, name: activeThread.name }}
+          messages={messagesByThread[activeThread.id] || []}
+          onSend={handleSend}
+          onBack={handleBack}
+          initialScrollTop={chatScrollPositions[activeThread.id] || 0}
+          onCaptureScrollTop={(value) => setChatScrollPositions((prev) => ({ ...prev, [activeThread.id]: value }))}
+        />
+      </div>
     </div>
   );
 }

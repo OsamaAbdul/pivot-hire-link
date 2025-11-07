@@ -156,7 +156,7 @@ const RecommendedJobs = ({ developerId, developerSkills }: RecommendedJobsProps)
             )}
 
             <Button asChild className="w-full">
-              <a href={`/dashboard?section=challenges`}>
+              <a href={`/dashboard?section=job`}>
                 View & Apply
               </a>
             </Button>

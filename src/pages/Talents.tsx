@@ -267,7 +267,7 @@ const Talents = () => {
                         <div className="flex items-center gap-4">
                           <Avatar className="h-12 w-12">
                             <AvatarImage
-                              src={`https://avatar.iran.liara.run/public/`}
+                              src={`https://avatar.iran.liara.run/public/${dev.id}`}
                               alt={`${dev.profiles?.full_name || "Talent"} avatar`}
                               loading="lazy"
                             />

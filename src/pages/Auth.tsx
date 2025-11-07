@@ -14,7 +14,37 @@ const Auth = () => {
       const { data: { session } } = await supabase.auth.getSession();
 
       if (session) {
-        // User just came back from Google OAuth
+        // User just came back from Google OAuth. Route based on profile completeness.
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        if (roleData?.role === "developer") {
+          const { data: devProfile } = await supabase
+            .from("developer_profiles")
+            .select("*")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+
+          const requiredOK = !!devProfile &&
+            !!devProfile.bio &&
+            !!devProfile.specialization &&
+            !!devProfile.experience_level &&
+            Array.isArray(devProfile.skills) && devProfile.skills.length > 0;
+          const hasAnyLink = !!devProfile && [
+            devProfile.portfolio_url,
+            devProfile.github_url,
+            devProfile.linkedin_url,
+            devProfile.resume_url,
+          ].some((v) => !!v && String(v).trim().length > 0);
+
+          if (!requiredOK || !hasAnyLink) {
+            navigate("/profile/build", { replace: true });
+            return;
+          }
+        }
         navigate("/dashboard", { replace: true });
       }
     };
@@ -22,8 +52,28 @@ const Auth = () => {
     handleSession();
 
     // Optional: listen for future auth changes
-    const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) navigate("/dashboard", { replace: true });
+    const { data: subscription } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session) {
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+        if (roleData?.role === "developer") {
+          const { data: devProfile } = await supabase
+            .from("developer_profiles")
+            .select("*")
+            .eq("user_id", session.user.id)
+            .maybeSingle();
+          const requiredOK = !!devProfile && !!devProfile.bio && !!devProfile.specialization && !!devProfile.experience_level && Array.isArray(devProfile.skills) && devProfile.skills.length > 0;
+          const hasAnyLink = !!devProfile && [devProfile.portfolio_url, devProfile.github_url, devProfile.linkedin_url, devProfile.resume_url].some((v) => !!v && String(v).trim().length > 0);
+          if (!requiredOK || !hasAnyLink) {
+            navigate("/profile/build", { replace: true });
+            return;
+          }
+        }
+        navigate("/dashboard", { replace: true });
+      }
     });
 
     return () => subscription.subscription.unsubscribe();

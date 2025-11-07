@@ -84,17 +84,17 @@ const Index = () => {
         <h2 className="text-center text-2xl md:text-3xl font-serif font-bold">Featured Talents</h2>
         <div className="mt-8 grid gap-6 md:grid-cols-4">
           {[
-            { name: "Aisha Bello", role: "Fintech Innovator" },
-            { name: "Chinedu Okoro", role: "AI Specialist" },
-            { name: "Musa Ibrahim", role: "SaaS Founder" },
-            { name: "Fatima Garba", role: "UX Designer" },
+            { name: "Aisha Bello", role: "Fintech Innovator", id: 62 },
+            { name: "Chinedu Okoro", role: "AI Specialist", id: 38 },
+            { name: "Musa Ibrahim", role: "SaaS Founder", id: 46 },
+            { name: "Fatima Garba", role: "UX Designer", id: 84 },
           ].map((t, i) => (
             <Card key={i} className="text-center">
               <CardContent className="p-6 space-y-4">
                 <div className="mx-auto h-24 w-24 rounded-full ring-2 ring-accent overflow-hidden">
                   <Avatar className="h-24 w-24">
                     <AvatarImage
-                      src={`https://avatar.iran.liara.run/public`}
+                      src={`https://avatar.iran.liara.run/public/${t.id}`}
                       alt={`${t.name} avatar`}
                       loading="lazy"
                     />

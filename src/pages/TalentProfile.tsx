@@ -164,8 +164,8 @@ export default function TalentProfile() {
               <CardContent className="p-4 flex items-start gap-3">
                 <div className="h-8 w-8 rounded-md bg-primary/20 flex items-center justify-center">🏆</div>
                 <div>
-                  <p className="font-medium">Talent Hunt Challenge Finalist</p>
-                  <p className="text-sm text-muted-foreground">Currently participating in the "Next-Gen Fintech App" challenge.</p>
+                  <p className="font-medium">Talent Hunt Job Finalist</p>
+                  <p className="text-sm text-muted-foreground">Currently participating in the "Next-Gen Fintech App" job.</p>
                 </div>
               </CardContent>
             </Card>

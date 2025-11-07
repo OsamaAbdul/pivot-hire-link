@@ -8,12 +8,16 @@ import DeveloperDashboard from "@/components/dashboard/DeveloperDashboard";
 import RecruiterDashboard from "@/components/dashboard/RecruiterDashboard";
 import RoleSelection from "@/components/dashboard/RoleSelection";
 import logo from "@/assets/nfclogo.jpg";
+import ConfirmLogoutModal from "@/components/auth/ConfirmLogoutModal";
+import NotificationBell from "@/components/header/NotificationBell";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
   const [profile, setProfile] = useState<any>(null);
+  const [logoutOpen, setLogoutOpen] = useState(false);
+  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     checkUser();
@@ -59,6 +63,32 @@ const Dashboard = () => {
         .maybeSingle();
 
       setProfile({ ...profileData, role: roleData?.role });
+
+      // If developer, enforce profile completion before allowing dashboard access
+      if (roleData?.role === "developer") {
+        const { data: devProfile } = await supabase
+          .from("developer_profiles")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        const requiredOK = !!devProfile &&
+          !!devProfile.bio &&
+          !!devProfile.specialization &&
+          !!devProfile.experience_level &&
+          Array.isArray(devProfile.skills) && devProfile.skills.length > 0;
+        const hasAnyLink = !!devProfile && [
+          devProfile.portfolio_url,
+          devProfile.github_url,
+          devProfile.linkedin_url,
+          devProfile.resume_url,
+        ].some((v) => !!v && String(v).trim().length > 0);
+
+        if (!requiredOK || !hasAnyLink) {
+          navigate("/profile/build", { replace: true });
+          return;
+        }
+      }
     } catch (error: any) {
       console.error("Error fetching profile:", error);
       toast.error("Failed to load profile");
@@ -69,11 +99,15 @@ const Dashboard = () => {
 
   const handleSignOut = async () => {
     try {
+      setLoggingOut(true);
       await supabase.auth.signOut();
+      setLogoutOpen(false);
       navigate("/");
       toast.success("Signed out successfully");
     } catch (error: any) {
       toast.error("Failed to sign out");
+    } finally {
+      setLoggingOut(false);
     }
   };
 
@@ -99,13 +133,16 @@ const Dashboard = () => {
             <div>
               <h2 className="font-serif font-bold text-lg text-foreground">NFC Talents</h2>
               <p className="text-sm text-muted-foreground">
-                {profile?.role === "developer" ? "Developer Dashboard" : "Recruiter Dashboard"}
+                {profile?.role === "developer" ? "Your Dashboard" : "Recruiter Dashboard"}
               </p>
             </div>
           </div>
-          <Button variant="outline" onClick={handleSignOut}>
-            Sign Out
-          </Button>
+          <div className="flex items-center gap-2">
+            <NotificationBell />
+            <Button variant="outline" onClick={() => setLogoutOpen(true)}>
+              Sign Out
+            </Button>
+          </div>
         </div>
       </nav>
 
@@ -119,6 +156,12 @@ const Dashboard = () => {
           <RecruiterDashboard profile={profile} />
         )}
       </div>
+      <ConfirmLogoutModal
+        open={logoutOpen}
+        onOpenChange={setLogoutOpen}
+        onConfirm={handleSignOut}
+        loading={loggingOut}
+      />
     </div>
   );
 };
