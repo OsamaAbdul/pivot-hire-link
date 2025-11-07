@@ -1,73 +1,111 @@
-# Welcome to your Lovable project
+# 🌍 NFC Talents — Discover and Empower Northern Talent
 
-## Project info
+**NFC Talents** is a modern web application designed to connect aspiring individuals from Northern Nigeria with mentors, investors, and opportunities that empower growth and innovation.  
+Built with **React**, **Vite**, **ShadCN/UI**, and **Lucide Icons**, the project combines aesthetics with performance and clarity of purpose.
 
-**URL**: https://lovable.dev/projects/0c76e054-ec92-42d5-a546-686a96c2ed58
+---
 
-## How can I edit this code?
+## 🚀 Features
 
-There are several ways of editing your application.
+### 🏠 Landing Page Highlights
+- **Hero Section:** A bold and inviting hero banner that captures the mission — “Discover and Empower Northern Talent.”
+- **Call to Action Buttons:**  
+  - “Apply Now” → routes to the signup page.  
+  - “Become a Partner” → opens the partner registration page.
 
-**Use Lovable**
+### 🎓 Programs Section
+Showcases three core programs:
+1. **Mentorship Programs** — Guidance from industry professionals.  
+2. **Investor Pitch Nights** — Platform to pitch to investors and venture capitalists.  
+3. **Skill-Building Workshops** — Targeted training on tech, business, and design.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/0c76e054-ec92-42d5-a546-686a96c2ed58) and start prompting.
+### 🌟 Featured Talents
+- Dynamically renders a list of standout individuals using the DiceBear Avatars API.  
+- Displays each talent’s name, role, and profile link.
 
-Changes made via Lovable will be committed automatically to this repo.
+### 🏗 Foundation Goals
+Highlights the foundation’s core values:
+1. **Fostering Innovation** — Supporting new ideas with resources.  
+2. **Building Community** — Strengthening collaboration across founders and investors.  
+3. **Driving Regional Growth** — Boosting sustainable businesses and local economies.
 
-**Use your preferred IDE**
+---
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🧱 Tech Stack
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+| Category | Tools & Libraries |
+|-----------|------------------|
+| **Frontend Framework** | [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) |
+| **UI Components** | [ShadCN/UI](https://ui.shadcn.com/) |
+| **Icons** | [Lucide React](https://lucide.dev/) |
+| **Routing** | [React Router DOM](https://reactrouter.com/) |
+| **Styling** | Tailwind CSS |
+| **Avatar Generation** | [DiceBear API](https://www.dicebear.com/) |
 
-Follow these steps:
+---
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+## ⚙️ Installation & Setup
 
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+### 1. Clone the repository
+```bash
+git clone https://github.com/OsamaAbdul/pivot-hire-link.git
+cd pivot-hire-link
 ```
 
-**Edit a file directly in GitHub**
+### 2. Install dependencies
+```bash
+npm install
+```
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### 3. Run the development server
+```bash
+npm run dev
+```
+Open your browser and go to [http://localhost:5173](http://localhost:5173).
 
-**Use GitHub Codespaces**
+---
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🌈 Design & Layout
 
-## What technologies are used for this project?
+- **Typography:** Elegant serif font for titles, clean sans-serif for body text.
+- **Color Palette:** Uses `bg-background`, `text-foreground`, `accent`, and `muted` color tokens for consistency.
+- **Responsive Design:** Fully responsive with Tailwind’s `md:` and `lg:` breakpoints.
+- **Consistent UI:** Components are modular, using ShadCN’s button, card, and avatar utilities for seamless styling.
 
-This project is built with:
+---
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## 🧩 Components Used
 
-## How can I deploy this project?
+| Component | Purpose |
+|------------|----------|
+| `<Navbar />` | Persistent top navigation bar |
+| `<Footer />` | Bottom section with contact/info |
+| `<Button />` | Custom ShadCN button variants |
+| `<Card />` & `<CardContent />` | For displaying program, talent, and goal blocks |
+| `<Avatar />` | Displays auto-generated profile avatars |
+| `<Link />` | Smooth navigation between routes |
 
-Simply open [Lovable](https://lovable.dev/projects/0c76e054-ec92-42d5-a546-686a96c2ed58) and click on Share -> Publish.
+---
 
-## Can I connect a custom domain to my Lovable project?
+## 💡 Future Improvements
+- Integrate backend APIs to dynamically load talents and programs.
+- Add user authentication and dashboards for applicants and partners.
+- Include filtering/sorting for talents and events.
+- Implement CMS-based content management for easier updates.
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 🧑‍💻 Author
+**Osama Abdul & Mimieamichy**  
+Developer & Creator of Pivot Hire Link  
+[GitHub](https://github.com/OsamaAbdul) & (https://github.com/mimieamichy)
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+---
+
+## 🪪 License
+This project is licensed under the **MIT License** — feel free to fork, modify, and build upon it.
+
+---
+
+> “Empowerment begins when opportunity meets preparation. NFC Talents creates that meeting point.”
