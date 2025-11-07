@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Talents from "./pages/Talents";
+import TalentProfile from "./pages/TalentProfile";
 import Partners from "./pages/Partners";
 import About from "./pages/About";
 import Privacy from "./pages/Privacy";
@@ -28,6 +29,7 @@ const App = () => (
           <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/talents" element={<Talents />} />
+          <Route path="/talents/profile/:id" element={<TalentProfile />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/partners/apply" element={<PartnerApply />} />
           <Route path="/about" element={<About />} />

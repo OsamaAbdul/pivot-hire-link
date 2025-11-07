@@ -1,0 +1,75 @@
+/* Recruiter Talent Profile page styles, tuned for dark theme */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.profile-card {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 20px;
+}
+
+.section-panel {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+.tabs-line {
+  height: 1px;
+  background: hsl(var(--border));
+}
+
+.chip {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--secondary) / 0.5);
+  font-size: 12px;
+}
+
+.skill-bar {
+  height: 8px;
+  background: hsl(var(--muted));
+  border-radius: 999px;
+  overflow: hidden;
+}
+.skill-bar > span {
+  display: block;
+  height: 100%;
+  background: hsl(var(--primary));
+}
+
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: 18px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: hsl(var(--border));
+}
+.timeline-item {
+  position: relative;
+  padding-left: 48px;
+}
+.timeline-dot {
+  position: absolute;
+  left: 12px;
+  top: 8px;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background: hsl(var(--primary));
+  box-shadow: 0 0 0 2px hsl(var(--card));
+}

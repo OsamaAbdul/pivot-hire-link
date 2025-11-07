@@ -267,9 +267,7 @@ const Talents = () => {
                         <div className="flex items-center gap-4">
                           <Avatar className="h-12 w-12">
                             <AvatarImage
-                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(
-                                dev.profiles?.full_name || "Talent",
-                              )}`}
+                              src={`https://avatar.iran.liara.run/public/`}
                               alt={`${dev.profiles?.full_name || "Talent"} avatar`}
                               loading="lazy"
                             />
@@ -297,7 +295,9 @@ const Talents = () => {
                           ))}
                         </div>
                         <div>
-                          <Link to="#" className="text-sm text-accent hover:underline">View Profile →</Link>
+                          <Link to={`/talents/profile/${dev.id}`} className="text-sm text-accent hover:underline" aria-label={`View ${dev.profiles?.full_name || "talent"} profile`}>
+                            View Profile →
+                          </Link>
                         </div>
                       </CardContent>
                     </Card>

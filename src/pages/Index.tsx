@@ -29,6 +29,7 @@ const Index = () => {
           <Button asChild size="lg" variant="outline" className="px-8 border-2 border-accent">
             <Link to="/partners/apply">Become a Partner</Link>
           </Button>
+         
         </div>
       </section>
 
@@ -93,7 +94,7 @@ const Index = () => {
                 <div className="mx-auto h-24 w-24 rounded-full ring-2 ring-accent overflow-hidden">
                   <Avatar className="h-24 w-24">
                     <AvatarImage
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(t.name)}`}
+                      src={`https://avatar.iran.liara.run/public`}
                       alt={`${t.name} avatar`}
                       loading="lazy"
                     />
@@ -104,7 +105,9 @@ const Index = () => {
                   <p className="font-semibold">{t.name}</p>
                   <p className="text-xs text-muted-foreground">{t.role}</p>
                 </div>
-                <Link to="#" className="text-xs text-accent hover:underline">View Profile →</Link>
+                <Link to="/talents/profile/demo" className="text-xs text-accent hover:underline" aria-label={`View ${t.name} profile`}>
+                  View Profile →
+                </Link>
               </CardContent>
             </Card>
           ))}

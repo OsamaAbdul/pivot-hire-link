@@ -94,9 +94,20 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
         if (profileError) throw profileError;
       }
 
+      // Decide post-signup redirect
+      try {
+        const target = roleDB === "developer" ? "/dashboard?section=profile" : "/dashboard";
+        localStorage.setItem("post_signup_redirect", target);
+      } catch {}
+
       onOpenChange(false);
-      // After signup, direct users to login via the route-driven modal
-      navigate("/auth");
+      // If session exists immediately, go straight to target; otherwise prompt login
+      if (data.session) {
+        const target = roleDB === "developer" ? "/dashboard?section=profile" : "/dashboard";
+        navigate(target);
+      } else {
+        navigate("/auth?mode=login");
+      }
     } catch (err: any) {
       setError(err?.message || "Sign up failed. Please try again.");
     } finally {

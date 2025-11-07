@@ -30,8 +30,16 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
       const { error } = await supabase.auth.signInWithPassword({ email, password });
       if (error) throw error;
       onOpenChange(false);
-      // Redirect to the authenticated dashboard after successful login
-      navigate("/dashboard");
+      // Redirect to stored path (e.g., profile builder) if present
+      let target = "/dashboard";
+      try {
+        const saved = localStorage.getItem("post_signup_redirect");
+        if (saved) {
+          target = saved;
+          localStorage.removeItem("post_signup_redirect");
+        }
+      } catch {}
+      navigate(target);
     } catch (err: any) {
       setError(err?.message || "Login failed. Please try again.");
     } finally {

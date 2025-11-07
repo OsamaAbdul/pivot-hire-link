@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, FileText, User } from "lucide-react";
+import { toast } from "sonner";
 import DeveloperProfile from "./developer/DeveloperProfile";
 import JobsList from "./developer/JobsList";
 import ApplicationsList from "./developer/ApplicationsList";
@@ -57,10 +58,35 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
   };
 
   const handleSelect = (key: string) => {
+    const isComplete = isProfileComplete(developerProfile);
+    if (!isComplete && key !== "profile") {
+      toast.error("Please complete your profile before accessing other sections.");
+      key = "profile";
+    }
     const sp = new URLSearchParams(location.search);
     sp.set("section", key);
     navigate({ search: sp.toString() }, { replace: true });
   };
+
+  const isProfileComplete = (dp: any | null) => {
+    if (!dp) return false;
+    const hasSkills = Array.isArray(dp.skills) && dp.skills.length > 0;
+    const hasBio = !!(dp.bio && dp.bio.trim().length);
+    const hasSpec = !!(dp.specialization && dp.specialization.trim().length);
+    const hasExp = !!(dp.experience_level && dp.experience_level.trim().length);
+    return hasSkills && hasBio && hasSpec && hasExp;
+  };
+
+  // Gate access: if incomplete, force "profile" section
+  useEffect(() => {
+    const isComplete = isProfileComplete(developerProfile);
+    if (!isComplete && activeSection !== "profile") {
+      const sp = new URLSearchParams(location.search);
+      sp.set("section", "profile");
+      navigate({ search: sp.toString() }, { replace: true });
+      toast.info("Finish your profile to unlock the dashboard.");
+    }
+  }, [developerProfile, activeSection, location.search, navigate]);
 
   const HomePanels = (
     <>

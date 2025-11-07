@@ -155,9 +155,7 @@ const PartnerApply = () => {
               By submitting, you agree to our <a href="/privacy" className="underline">Privacy Policy</a> and
               <a href="/terms" className="underline ml-1">Terms of Service</a>.
             </p>
-            <p className="mt-4 text-center apply-login">
-              Already a partner? <a href="/auth" className="underline">Log in</a>
-            </p>
+           
           </div>
         </form>
       </section>
