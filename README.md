@@ -99,7 +99,7 @@ Open your browser and go to [http://localhost:5173](http://localhost:5173).
 ## 🧑‍💻 Author
 **Osama Abdul & Mimieamichy**  
 Developer & Creator of Pivot Hire Link  
-[GitHub](https://github.com/OsamaAbdul) & (https://github.com/mimieamichy)
+(https://github.com/OsamaAbdul) & (https://github.com/mimieamichy)
 
 ---
 
