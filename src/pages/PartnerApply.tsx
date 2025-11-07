@@ -12,7 +12,7 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import "./PartnerApply.css";
 import logo from "@/assets/nfclogo.jpg";
 
@@ -40,18 +40,18 @@ const PartnerApply = () => {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
-    const t = toast({ title: "Submitting application…" });
+    toast.loading("Submitting application…");
     try {
       // Simulate network latency for loading state fidelity
       await new Promise((r) => setTimeout(r, 1200));
-      t.update({ title: "Application submitted", description: "We will reach out via email shortly." });
+      toast.success("Application submitted! We will reach out via email shortly.");
       setCompany("");
       setContact("");
       setEmail("");
       setType("Sponsorship");
       setMessage("");
     } catch (err) {
-      t.update({ title: "Submission failed", description: "Please try again later." });
+      toast.error("Submission failed. Please try again later.");
     } finally {
       setSubmitting(false);
     }

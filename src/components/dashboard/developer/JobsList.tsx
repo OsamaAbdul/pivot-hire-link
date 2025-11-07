@@ -19,10 +19,26 @@ const JobsList = ({ developerId }: JobsListProps) => {
   const [selectedJob, setSelectedJob] = useState<any>(null);
   const [coverLetter, setCoverLetter] = useState("");
   const [applying, setApplying] = useState(false);
+  const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchJobs();
-  }, []);
+    fetchApplications();
+  }, [developerId]);
+
+  const fetchApplications = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("applications")
+        .select("job_id")
+        .eq("developer_id", developerId);
+
+      if (error) throw error;
+      setAppliedJobIds(new Set(data?.map(app => app.job_id) || []));
+    } catch (error: any) {
+      console.error("Failed to load applications:", error);
+    }
+  };
 
   const fetchJobs = async () => {
     try {
@@ -63,6 +79,7 @@ const JobsList = ({ developerId }: JobsListProps) => {
       toast.success("Application submitted successfully!");
       setSelectedJob(null);
       setCoverLetter("");
+      fetchApplications();
     } catch (error: any) {
       if (error.code === "23505") {
         toast.error("You've already applied for this job");
@@ -138,8 +155,13 @@ const JobsList = ({ developerId }: JobsListProps) => {
                   </div>
                 )}
 
-                <Button onClick={() => setSelectedJob(job)} className="w-full">
-                  Apply Now
+                <Button 
+                  onClick={() => setSelectedJob(job)} 
+                  className="w-full"
+                  disabled={appliedJobIds.has(job.id)}
+                  variant={appliedJobIds.has(job.id) ? "secondary" : "default"}
+                >
+                  {appliedJobIds.has(job.id) ? "Applied" : "Apply Now"}
                 </Button>
               </CardContent>
             </Card>

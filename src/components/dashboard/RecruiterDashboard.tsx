@@ -7,6 +7,7 @@ import RecruiterProfile from "./recruiter/RecruiterProfile";
 import JobManagement from "./recruiter/JobManagement";
 import DeveloperDirectory from "./recruiter/DeveloperDirectory";
 import ApplicationsManager from "./recruiter/ApplicationsManager";
+import MatchingDevelopers from "./recruiter/MatchingDevelopers";
 
 interface RecruiterDashboardProps {
   profile: any;
@@ -93,6 +94,8 @@ const RecruiterDashboard = ({ profile }: RecruiterDashboardProps) => {
           </CardContent>
         </Card>
       </div>
+
+      <MatchingDevelopers recruiterId={profile.id} />
 
       <Tabs defaultValue="jobs" className="space-y-4">
         <TabsList>
