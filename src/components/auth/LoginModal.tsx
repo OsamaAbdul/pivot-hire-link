@@ -24,20 +24,6 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
 
   const location = useLocation();
 
-  // check for authenticated users(sessions) whenenever the page loads
-
-useEffect(() => {
-  const checkAuth = async () => {
-    const { data: {session}} = await supabase.auth.getSession()
-
-    // if the user is authenticated
-    if(!session) {
-      navigate('/auth')
-    }
-  }
-  // calling the function whenever the site loads
-  checkAuth();
-},[])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

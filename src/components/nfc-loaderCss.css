@@ -1,0 +1,31 @@
+/* --- New Global CSS Keyframes --- */
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes oscillate {
+  0%, 100% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(0.95) rotate(10deg); }
+}
+
+@keyframes pulse-ring {
+  0% { opacity: 0.8; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 0.8; transform: scale(0.8); }
+}
+
+/* --- Tailwind Configuration Update (tailwind.config.js) --- */
+/* You MUST add these to your tailwind.config.js 'animation' section */
+/*
+theme: {
+  extend: {
+    animation: {
+      'nfclogo-spin-slow': 'spin-slow 6s linear infinite', 
+      'nfclogo-oscillate': 'oscillate 3s ease-in-out infinite alternate', 
+      'nfclogo-pulse-ring': 'pulse-ring 2s ease-in-out infinite', 
+    },
+  },
+},
+*/

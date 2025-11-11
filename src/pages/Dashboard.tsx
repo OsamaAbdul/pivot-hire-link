@@ -10,6 +10,7 @@ import RoleSelection from "@/components/dashboard/RoleSelection";
 import logo from "@/assets/nfclogo.jpg";
 import ConfirmLogoutModal from "@/components/auth/ConfirmLogoutModal";
 import NotificationBell from "@/components/header/NotificationBell";
+import NFCLoader from "@/components/nfc-loader";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -118,7 +119,8 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        {/* <Loader2 className="h-8 w-8 animate-spin text-primary" /> */}
+        <NFCLoader />
       </div>
     );
   }
