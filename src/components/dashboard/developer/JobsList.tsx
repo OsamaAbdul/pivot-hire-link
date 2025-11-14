@@ -67,6 +67,13 @@ const JobsList = ({ developerId }: JobsListProps) => {
     if (!selectedJob) return;
     setApplying(true);
 
+    // Require a non-empty cover letter before submitting
+    if (!coverLetter.trim()) {
+      toast.error("Cover letter cannot be empty");
+      setApplying(false);
+      return;
+    }
+
     try {
       const { error } = await supabase.from("applications").insert({
         job_id: selectedJob.id,
@@ -101,7 +108,7 @@ const JobsList = ({ developerId }: JobsListProps) => {
 
   return (
     <>
-      <div className="grid gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {jobs.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
@@ -110,12 +117,15 @@ const JobsList = ({ developerId }: JobsListProps) => {
           </Card>
         ) : (
           jobs.map((job) => (
-            <Card key={job.id} className="hover:shadow-md transition-shadow">
-              <CardHeader>
+            <Card
+              key={job.id}
+              className="transition-shadow transition-transform duration-200 hover:shadow-lg hover:-translate-y-0.5"
+            >
+              <CardHeader className="p-4 pb-3">
                 <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-xl font-serif">{job.title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2 mt-2">
+                    <CardTitle className="text-lg font-serif">{job.title}</CardTitle>
+                    <CardDescription className="flex items-center gap-2 mt-1 text-sm">
                       <span className="font-medium">
                         {job.profiles?.recruiter_profiles?.[0]?.company_name || "Company"}
                       </span>
@@ -124,8 +134,8 @@ const JobsList = ({ developerId }: JobsListProps) => {
                   <Badge>{formatJobType(job.job_type)}</Badge>
                 </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <p className="text-muted-foreground line-clamp-3">{job.description}</p>
+              <CardContent className="p-4 pt-0 space-y-3">
+                <p className="text-sm text-muted-foreground line-clamp-3">{job.description}</p>
 
                 <div className="flex flex-wrap gap-4 text-sm">
                   {job.location && (
@@ -177,7 +187,7 @@ const JobsList = ({ developerId }: JobsListProps) => {
 
           <div className="space-y-4">
             <div>
-              <Label htmlFor="coverLetter">Cover Letter (Optional)</Label>
+              <Label htmlFor="coverLetter">Cover Letter (Required)</Label>
               <Textarea
                 id="coverLetter"
                 value={coverLetter}
@@ -186,13 +196,16 @@ const JobsList = ({ developerId }: JobsListProps) => {
                 rows={6}
                 className="mt-2"
               />
+              {coverLetter.trim().length === 0 && (
+                <p className="mt-2 text-xs text-destructive">Please enter a cover letter.</p>
+              )}
             </div>
 
             <div className="flex gap-2 justify-end">
               <Button variant="outline" onClick={() => setSelectedJob(null)}>
                 Cancel
               </Button>
-              <Button onClick={handleApply} disabled={applying}>
+              <Button onClick={handleApply} disabled={applying || coverLetter.trim().length === 0}>
                 {applying ? "Submitting..." : "Submit Application"}
               </Button>
             </div>

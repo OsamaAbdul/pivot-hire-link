@@ -30,6 +30,7 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
     location: string;
     remote_allowed: boolean;
     salary_range: string;
+    application_deadline?: string;
     required_skills: string;
     experience_required: string;
     is_active: boolean;
@@ -40,10 +41,13 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
     location: "",
     remote_allowed: false,
     salary_range: "",
+    application_deadline: "",
     required_skills: "",
     experience_required: "",
     is_active: true,
   });
+
+  const [viewTab, setViewTab] = useState<"active" | "drafts" | "past">("active");
 
   useEffect(() => {
     fetchJobs();
@@ -67,6 +71,7 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
       location: "",
       remote_allowed: false,
       salary_range: "",
+      application_deadline: "",
       required_skills: "",
       experience_required: "",
       is_active: true,
@@ -84,23 +89,40 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
         .map((s) => s.trim())
         .filter(Boolean);
 
+      // Normalize application_deadline to null when empty to satisfy DB type
       const jobData = {
         ...formData,
+        application_deadline: formData.application_deadline ? formData.application_deadline : null,
         required_skills: skillsArray,
         recruiter_id: recruiterId,
       };
 
       if (editingJob) {
-        const { error } = await supabase
+        let { error } = await supabase
           .from("jobs")
           .update(jobData)
           .eq("id", editingJob.id);
-
+        // Fallback: environments without application_deadline column
+        if (error && String(error.message || "").toLowerCase().includes("application_deadline")) {
+          const { application_deadline, ...jobDataNoDeadline } = jobData as any;
+          const retry = await supabase
+            .from("jobs")
+            .update(jobDataNoDeadline)
+            .eq("id", editingJob.id);
+          if (retry.error) throw retry.error;
+          error = null;
+        }
         if (error) throw error;
         toast.success("Job updated successfully!");
       } else {
-        const { error } = await supabase.from("jobs").insert(jobData);
-
+        let { error } = await supabase.from("jobs").insert(jobData);
+        // Fallback: environments without application_deadline column
+        if (error && String(error.message || "").toLowerCase().includes("application_deadline")) {
+          const { application_deadline, ...jobDataNoDeadline } = jobData as any;
+          const retry = await supabase.from("jobs").insert(jobDataNoDeadline);
+          if (retry.error) throw retry.error;
+          error = null;
+        }
         if (error) throw error;
         toast.success("Job posted successfully!");
       }
@@ -116,6 +138,43 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
     }
   };
 
+  const handleSaveDraft = async () => {
+    setLoading(true);
+    try {
+      const skillsArray = formData.required_skills
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean);
+
+      const jobData = {
+        ...formData,
+        application_deadline: formData.application_deadline ? formData.application_deadline : null,
+        is_active: false,
+        required_skills: skillsArray,
+        recruiter_id: recruiterId,
+      };
+
+      let { error } = await supabase.from("jobs").insert(jobData);
+      // Fallback: environments without application_deadline column
+      if (error && String(error.message || "").toLowerCase().includes("application_deadline")) {
+        const { application_deadline, ...jobDataNoDeadline } = jobData as any;
+        const retry = await supabase.from("jobs").insert(jobDataNoDeadline);
+        if (retry.error) throw retry.error;
+        error = null;
+      }
+      if (error) throw error;
+      toast.success("Draft saved");
+      setDialogOpen(false);
+      resetForm();
+      fetchJobs();
+      onUpdate();
+    } catch (error: any) {
+      toast.error(error.message || "Failed to save draft");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleEdit = (job: any) => {
     setEditingJob(job);
     setFormData({
@@ -125,6 +184,7 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
       location: job.location || "",
       remote_allowed: job.remote_allowed,
       salary_range: job.salary_range || "",
+      application_deadline: job.application_deadline || "",
       required_skills: job.required_skills?.join(", ") || "",
       experience_required: job.experience_required || "",
       is_active: job.is_active,
@@ -230,39 +290,50 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
                 <Label htmlFor="remote_allowed">Remote work allowed</Label>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="salary_range">Salary Range</Label>
-                  <Input
-                    id="salary_range"
-                    value={formData.salary_range}
-                    onChange={(e) => setFormData({ ...formData, salary_range: e.target.value })}
-                    placeholder="$50k - $80k"
-                  />
-                </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="salary_range">Salary Range</Label>
+          <Input
+            id="salary_range"
+            value={formData.salary_range}
+            onChange={(e) => setFormData({ ...formData, salary_range: e.target.value })}
+            placeholder="$50k - $80k"
+          />
+        </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="experience_required">Experience Required</Label>
-                  <Input
-                    id="experience_required"
-                    value={formData.experience_required}
-                    onChange={(e) =>
-                      setFormData({ ...formData, experience_required: e.target.value })
-                    }
-                    placeholder="2-5 years"
-                  />
-                </div>
-              </div>
+        <div className="space-y-2">
+          <Label htmlFor="experience_required">Experience Required</Label>
+          <Input
+            id="experience_required"
+            value={formData.experience_required}
+            onChange={(e) =>
+              setFormData({ ...formData, experience_required: e.target.value })
+            }
+            placeholder="2-5 years"
+          />
+        </div>
+      </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="required_skills">Required Skills (comma-separated)</Label>
-                <Input
-                  id="required_skills"
-                  value={formData.required_skills}
-                  onChange={(e) => setFormData({ ...formData, required_skills: e.target.value })}
-                  placeholder="React, TypeScript, Node.js"
-                />
-              </div>
+      <div className="grid md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="application_deadline">Application Deadline</Label>
+          <Input
+            id="application_deadline"
+            type="date"
+            value={formData.application_deadline}
+            onChange={(e) => setFormData({ ...formData, application_deadline: e.target.value })}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="required_skills">Required Skills (comma-separated)</Label>
+          <Input
+            id="required_skills"
+            value={formData.required_skills}
+            onChange={(e) => setFormData({ ...formData, required_skills: e.target.value })}
+            placeholder="React, TypeScript, Node.js"
+          />
+        </div>
+      </div>
 
               <div className="flex items-center space-x-2">
                 <Switch
@@ -284,6 +355,9 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
                 >
                   Cancel
                 </Button>
+                <Button type="button" variant="secondary" onClick={handleSaveDraft} disabled={loading}>
+                  {loading ? "Saving..." : "Save as Draft"}
+                </Button>
                 <Button type="submit" disabled={loading}>
                   {loading ? "Saving..." : editingJob ? "Update Job" : "Post Job"}
                 </Button>
@@ -291,6 +365,23 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
             </form>
           </DialogContent>
         </Dialog>
+      </div>
+
+      {/* Simple tabs to filter Active / Drafts / Past */}
+      <div className="flex items-center gap-6 border-b border-border pb-3">
+        {[
+          { key: "active", label: `Active (${jobs.filter(j => j.is_active).length})` },
+          { key: "drafts", label: `Drafts (${jobs.filter(j => !j.is_active).length})` },
+          { key: "past", label: `Past (${jobs.filter(j => !j.is_active && new Date(j.created_at) < new Date(Date.now() - 30*24*60*60*1000)).length})` },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            className={"text-sm px-1 pb-1 border-b-2 " + (viewTab === tab.key ? "border-primary text-foreground" : "border-transparent text-muted-foreground")}
+            onClick={() => setViewTab(tab.key as any)}
+          >
+            {tab.label}
+          </button>
+        ))}
       </div>
 
       <div className="grid gap-4">
@@ -301,7 +392,14 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
             </CardContent>
           </Card>
         ) : (
-          jobs.map((job) => (
+          jobs
+            .filter((job) => {
+              if (viewTab === "active") return job.is_active;
+              if (viewTab === "drafts") return !job.is_active && new Date(job.created_at) >= new Date(Date.now() - 30*24*60*60*1000);
+              // past: inactive older than 30 days
+              return !job.is_active && new Date(job.created_at) < new Date(Date.now() - 30*24*60*60*1000);
+            })
+            .map((job) => (
             <Card key={job.id}>
               <CardHeader>
                 <div className="flex justify-between items-start">

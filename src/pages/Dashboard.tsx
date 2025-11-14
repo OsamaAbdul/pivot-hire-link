@@ -9,7 +9,6 @@ import RecruiterDashboard from "@/components/dashboard/RecruiterDashboard";
 import RoleSelection from "@/components/dashboard/RoleSelection";
 import logo from "@/assets/nfclogo.jpg";
 import ConfirmLogoutModal from "@/components/auth/ConfirmLogoutModal";
-import NotificationBell from "@/components/header/NotificationBell";
 import NFCLoader from "@/components/nfc-loader";
 
 const Dashboard = () => {
@@ -90,6 +89,27 @@ const Dashboard = () => {
           return;
         }
       }
+
+      // If recruiter, enforce onboarding completeness before allowing dashboard access
+      if (roleData?.role === "recruiter") {
+        const { data: recProfile } = await supabase
+          .from("recruiter_profiles")
+          .select("*")
+          .eq("user_id", session.user.id)
+          .maybeSingle();
+
+        // Be resilient to environments where new columns may not exist yet.
+        const minimalOK = !!recProfile &&
+          !!recProfile.company_name &&
+          !!recProfile.company_size &&
+          !!recProfile.industry &&
+          !!recProfile.description;
+
+        if (!minimalOK) {
+          navigate("/recruiter/build", { replace: true });
+          return;
+        }
+      }
     } catch (error: any) {
       console.error("Error fetching profile:", error);
       toast.error("Failed to load profile");
@@ -140,7 +160,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <NotificationBell />
+            {/* Notifications removed per requirements */}
             <Button variant="outline" onClick={() => setLogoutOpen(true)}>
               Sign Out
             </Button>

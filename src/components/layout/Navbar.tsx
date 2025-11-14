@@ -5,6 +5,7 @@ import logo from "@/assets/nfclogo.jpg";
 import LoginModal from "@/components/auth/LoginModal";
 import SignupModal from "@/components/auth/SignupModal";
 import { Menu, X } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 const Navbar = () => {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -12,6 +13,16 @@ const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const isTalentsRoute = location.pathname.startsWith("/talents");
+
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      navigate("/");
+    } catch (e) {
+      // noop: keep UI simple per requirement
+    }
+  };
 
   // Route-driven auth: automatically open modals when visiting /auth
   useEffect(() => {
@@ -31,6 +42,23 @@ const Navbar = () => {
     setMobileOpen(false);
   }, [location]);
 
+  // Global event-driven auth trigger so any page button can open modals
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const custom = e as CustomEvent<{ mode?: "login" | "signup" }>;
+      const mode = custom.detail?.mode || "login";
+      if (mode === "signup") {
+        setSignupOpen(true);
+        setLoginOpen(false);
+      } else {
+        setLoginOpen(true);
+        setSignupOpen(false);
+      }
+    };
+    window.addEventListener("nfc:openAuth", handler as EventListener);
+    return () => window.removeEventListener("nfc:openAuth", handler as EventListener);
+  }, []);
+
   return (
     <>
       <nav className="sticky top-0 z-50 border-b border-border bg-card/60 backdrop-blur">
@@ -41,13 +69,24 @@ const Navbar = () => {
           </Link>
           {/* Desktop navigation */}
           <div className="hidden md:flex items-center gap-6 text-sm text-muted-foreground">
-            
-            <Link to="/jobs" className="hover:text-foreground">Jobs</Link>
-            <Link to="/talents" className="hover:text-foreground">Talents</Link>
-            <Link to="/about" className="hover:text-foreground">About Us</Link>
-            <Link to="/partners" className="hover:text-foreground">Partners</Link>
-            <button onClick={() => setLoginOpen(true)} className="hover:text-foreground">Login</button>
-            <Button size="sm" className="ml-2" onClick={() => setSignupOpen(true)}>Apply Now</Button>
+            {isTalentsRoute ? (
+              <>
+                <Link to="/" className="hover:text-foreground">Home</Link>
+                <Link to="/jobs" className="hover:text-foreground">Jobs</Link>
+                <Link to="/dashboard?section=profile" className="hover:text-foreground">My Profile</Link>
+                <Link to="/dashboard?section=settings" className="hover:text-foreground">Settings</Link>
+                <Button variant="outline" size="sm" onClick={handleSignOut}>Sign Out</Button>
+              </>
+            ) : (
+              <>
+                <Link to="/" className="hover:text-foreground">Home</Link>
+                <Link to="/jobs" className="hover:text-foreground">Jobs</Link>
+                <Link to="/about" className="hover:text-foreground">About Us</Link>
+                <Link to="/partners" className="hover:text-foreground">Partners</Link>
+                <button onClick={() => setLoginOpen(true)} className="hover:text-foreground">Login</button>
+                <Button size="sm" className="ml-2" onClick={() => setSignupOpen(true)}>Apply Now</Button>
+              </>
+            )}
           </div>
           {/* Mobile menu button */}
           <button
@@ -85,37 +124,67 @@ const Navbar = () => {
               </button>
             </div>
             <nav className="flex flex-col gap-1 p-4 text-sm">
-              <Link to="/jobs" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
-                Jobs
-              </Link>
-              <Link to="/talents" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
-                Talents
-              </Link>
-              <Link to="/about" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
-                About Us
-              </Link>
-              <Link to="/partners" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
-                Partners
-              </Link>
-              <button
-                className="mt-2 px-3 py-2 text-left rounded hover:bg-muted/20"
-                onClick={() => {
-                  setMobileOpen(false);
-                  setLoginOpen(true);
-                }}
-              >
-                Login
-              </button>
-              <Button
-                size="sm"
-                className="mt-2"
-                onClick={() => {
-                  setMobileOpen(false);
-                  setSignupOpen(true);
-                }}
-              >
-                Apply Now
-              </Button>
+              {isTalentsRoute ? (
+                <>
+                  <Link to="/" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    Home
+                  </Link>
+                  <Link to="/jobs" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    Jobs
+                  </Link>
+                  <Link to="/dashboard?section=profile" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    My Profile
+                  </Link>
+                  <Link to="/dashboard?section=settings" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    Settings
+                  </Link>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      handleSignOut();
+                    }}
+                  >
+                    Sign Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Link to="/" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    Home
+                  </Link>
+                  <Link to="/jobs" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    Jobs
+                  </Link>
+                  <Link to="/about" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    About Us
+                  </Link>
+                  <Link to="/partners" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
+                    Partners
+                  </Link>
+                  <button
+                    className="mt-2 px-3 py-2 text-left rounded hover:bg-muted/20"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setLoginOpen(true);
+                    }}
+                  >
+                    Login
+                  </button>
+                  <Button
+                    size="sm"
+                    className="mt-2"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      setSignupOpen(true);
+                    }}
+                  >
+                    Apply Now
+                  </Button>
+                </>
+              )}
             </nav>
           </div>
         </div>

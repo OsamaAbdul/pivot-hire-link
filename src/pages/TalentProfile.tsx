@@ -75,9 +75,9 @@ export default function TalentProfile() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 flex-1">
         <div className="mb-4">
           <Button variant="ghost" className="gap-2" onClick={handleBack} aria-label="Go back">
             <ArrowLeft className="h-4 w-4" /> Back

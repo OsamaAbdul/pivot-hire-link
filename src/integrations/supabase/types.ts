@@ -128,6 +128,7 @@ export type Database = {
           remote_allowed: boolean | null
           required_skills: string[] | null
           salary_range: string | null
+          application_deadline: string | null
           title: string
           updated_at: string | null
         }
@@ -143,6 +144,7 @@ export type Database = {
           remote_allowed?: boolean | null
           required_skills?: string[] | null
           salary_range?: string | null
+          application_deadline?: string | null
           title: string
           updated_at?: string | null
         }
@@ -158,6 +160,7 @@ export type Database = {
           remote_allowed?: boolean | null
           required_skills?: string[] | null
           salary_range?: string | null
+          application_deadline?: string | null
           title?: string
           updated_at?: string | null
         }
@@ -213,6 +216,11 @@ export type Database = {
           description: string | null
           id: string
           industry: string | null
+          hiring_preferences: string | null
+          contact_email: string | null
+          contact_phone: string | null
+          verification_docs_url: string | null
+          verification_status: string | null
           updated_at: string | null
           user_id: string
         }
@@ -224,6 +232,11 @@ export type Database = {
           description?: string | null
           id?: string
           industry?: string | null
+          hiring_preferences?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          verification_docs_url?: string | null
+          verification_status?: string | null
           updated_at?: string | null
           user_id: string
         }
@@ -235,6 +248,11 @@ export type Database = {
           description?: string | null
           id?: string
           industry?: string | null
+          hiring_preferences?: string | null
+          contact_email?: string | null
+          contact_phone?: string | null
+          verification_docs_url?: string | null
+          verification_status?: string | null
           updated_at?: string | null
           user_id?: string
         }

@@ -20,7 +20,7 @@ const DeveloperDashboard = ({ profile }: DeveloperDashboardProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const searchParams = new URLSearchParams(location.search);
-  const activeSection = (searchParams.get("section") || "dashboard").toLowerCase();
+  const activeSection = (searchParams.get("section") || "job").toLowerCase();
 
   useEffect(() => {
     fetchDeveloperProfile();

@@ -143,8 +143,9 @@ const Talents = () => {
   };
 
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
+    <div className="dark min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
+      <main className="flex-1">
       {/* Header */}
       <section className="container mx-auto px-6 pt-12 md:pt-16">
         <h1 className="text-center font-bold tracking-tight text-4xl md:text-5xl">Find Your Next Star</h1>
@@ -361,6 +362,7 @@ const Talents = () => {
           </div>
         </div>
       </section>
+      </main>
 
       <Footer />
     </div>

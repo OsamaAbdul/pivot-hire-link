@@ -1,6 +1,5 @@
 import { cn } from "@/lib/utils";
-import { Link, useLocation } from "react-router-dom";
-import { Briefcase, User, Settings } from "lucide-react";
+import { Briefcase, Settings, User, Users } from "lucide-react";
 
 interface SidebarProps {
   active: string;
@@ -9,21 +8,20 @@ interface SidebarProps {
 }
 
 const items = [
-  { key: "job", label: "Jobs", icon: Briefcase },
-  { key: "profile", label: "My Profile", icon: User },
+  { key: "jobs", label: "Job Posts", icon: Briefcase },
+  { key: "talents", label: "Talents", icon: Users },
+  { key: "profile", label: "Profile", icon: User },
   { key: "settings", label: "Settings", icon: Settings },
 ];
 
 export default function Sidebar({ active, onSelect, inMobile = false }: SidebarProps) {
-  const location = useLocation();
-
   return (
     <aside
       className={cn(
         "bg-sidebar-background/100 text-sidebar-foreground border-sidebar-border p-3",
         inMobile ? "block w-full border-0" : "w-[240px] shrink-0 border-r hidden md:block",
       )}
-      aria-label="Dashboard navigation"
+      aria-label="Recruiter dashboard navigation"
     >
       <nav className="space-y-1">
         {items.map(({ key, label, icon: Icon }) => {
@@ -43,7 +41,6 @@ export default function Sidebar({ active, onSelect, inMobile = false }: SidebarP
             >
               <Icon className="h-4 w-4" aria-hidden="true" />
               <span>{label}</span>
-              {/* Message badge removed with Messages item */}
             </button>
           );
         })}

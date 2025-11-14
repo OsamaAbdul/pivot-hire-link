@@ -82,16 +82,20 @@ const DeveloperDirectory = () => {
         </div>
       </div>
 
-      <div className="grid gap-4">
+      <div className="columns-1 sm:columns-2 lg:columns-3 gap-x-4">
         {filteredDevelopers.length === 0 ? (
-          <Card>
+          <Card style={{ breakInside: "avoid" }} className="mb-4">
             <CardContent className="py-8 text-center text-muted-foreground">
               No developers found
             </CardContent>
           </Card>
         ) : (
           filteredDevelopers.map((dev) => (
-            <Card key={dev.id} className="hover:shadow-md transition-shadow">
+            <Card
+              key={dev.id}
+              className="hover:shadow-md transition-shadow mb-4"
+              style={{ breakInside: "avoid" }}
+            >
               <CardHeader>
                 <div className="flex justify-between items-start">
                   <div>

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -173,12 +174,19 @@ const DeveloperProfile = ({ profile, developerProfile, onUpdate }: DeveloperProf
 
             <div className="space-y-2">
               <Label htmlFor="availability">Availability</Label>
-              <Input
-                id="availability"
+              <Select
                 value={formData.availability}
-                onChange={(e) => setFormData({ ...formData, availability: e.target.value })}
-                placeholder="Available, Not available, Part-time"
-              />
+                onValueChange={(value) => setFormData({ ...formData, availability: value })}
+              >
+                <SelectTrigger id="availability">
+                  <SelectValue placeholder="Select availability" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Available">Available</SelectItem>
+                  <SelectItem value="Not available">Not available</SelectItem>
+                  <SelectItem value="Part-time">Part-time</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 

@@ -7,6 +7,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Dashboard from "./pages/Dashboard";
 import ProfileBuilder from "./pages/ProfileBuilder";
+import RecruiterOnboarding from "./pages/RecruiterOnboarding";
 import NotFound from "./pages/NotFound";
 import Talents from "./pages/Talents";
 import TalentProfile from "./pages/TalentProfile";
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/profile/build" element={<RequireAuth><ProfileBuilder /></RequireAuth>} />
+          <Route path="/recruiter/build" element={<RequireAuth><RecruiterOnboarding /></RequireAuth>} />
           <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

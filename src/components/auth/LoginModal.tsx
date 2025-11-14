@@ -85,7 +85,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-full max-w-md max-h-[85vh] overflow-y-auto no-scrollbar rounded-[var(--radius)] border border-border bg-card p-6 shadow-lg">
+      <DialogContent id="auth-login-modal" className="w-full max-w-md max-h-[85vh] overflow-y-auto no-scrollbar rounded-[var(--radius)] border border-border bg-card p-6 shadow-lg" aria-labelledby="login-modal-title">
         {/* Brand */}
         <div className="flex items-center justify-center gap-3 mb-4">
           <img src={logo} alt="Northern Founders logo" className="w-7 h-7 rounded-sm object-cover" />
@@ -93,7 +93,7 @@ export default function LoginModal({ open, onOpenChange }: LoginModalProps) {
         </div>
 
         <DialogHeader className="text-center space-y-2">
-          <DialogTitle className="text-2xl md:text-3xl font-semibold">Welcome Back</DialogTitle>
+          <DialogTitle id="login-modal-title" className="text-2xl md:text-3xl font-semibold">Welcome Back</DialogTitle>
           <p className="text-sm text-muted-foreground">Log in to access the community platform.</p>
         </DialogHeader>
 

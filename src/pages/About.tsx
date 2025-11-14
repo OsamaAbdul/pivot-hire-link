@@ -21,9 +21,10 @@ const PillarCard = ({ icon: Icon, title, description }: { icon: any; title: stri
 
 const About = () => {
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
 
+      <main className="flex-1">
       {/* Hero / Intro */}
       <section className="container mx-auto px-6 py-10 md:py-16">
         <Card className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0f2536] via-[#132c43] to-[#0f1f2e] border-0">
@@ -86,13 +87,23 @@ const About = () => {
               your journey starts here. Join us in shaping the future of innovation in the North.
             </p>
             <div className="mt-6">
-              <Button asChild className="px-6">
-                <Link to="/auth?mode=signup">Join the Hunt</Link>
+              <Button
+                className="px-6"
+                aria-haspopup="dialog"
+                aria-controls="auth-signup-modal"
+                onClick={() => {
+                  const event = new CustomEvent("nfc:openAuth", { detail: { mode: "signup" } });
+                  window.dispatchEvent(event);
+                }}
+              >
+                Join the Hunt
               </Button>
             </div>
           </div>
         </Card>
       </section>
+
+      </main>
 
       <Footer />
     </div>

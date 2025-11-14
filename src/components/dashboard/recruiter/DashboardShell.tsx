@@ -2,7 +2,6 @@ import { ReactNode, useState } from "react";
 import Sidebar from "./Sidebar";
 import { Search, Menu, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import "./talent-dashboard.css";
 
 interface DashboardShellProps {
   active: string;
@@ -40,8 +39,8 @@ export default function DashboardShell({ active, onSelect, children, rightAside 
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <Input
-                aria-label="Search jobs"
-                placeholder="Search jobs..."
+                aria-label="Search"
+                placeholder="Search..."
                 className="pl-9 bg-background/70"
               />
             </div>
@@ -59,6 +58,7 @@ export default function DashboardShell({ active, onSelect, children, rightAside 
           )}
         </div>
       </main>
+
       {/* Mobile sidebar panel - opens from left */}
       {mobileOpen && (
         <div

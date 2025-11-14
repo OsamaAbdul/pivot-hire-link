@@ -56,6 +56,29 @@
 .apply-select { height: 44px; }
 .apply-textarea { min-height: 140px; }
 
+.required-asterisk {
+  color: #ff6b6b; /* accessible contrast on dark background */
+  margin-left: 4px;
+}
+
+.apply-file {
+  height: auto; /* let native file input render properly */
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.logo-preview {
+  display: inline-flex;
+  align-items: center;
+}
+
+.preview-image {
+  width: 72px;
+  height: 72px;
+  object-fit: cover;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
 .apply-button {
   height: 44px;
   background-color: #34e5c3;

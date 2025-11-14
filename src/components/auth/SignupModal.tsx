@@ -114,7 +114,9 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       {/* Container uses exact measurements to match reference */}
       <DialogContent
+        id="auth-signup-modal"
         aria-label="Sign up"
+        aria-labelledby="signup-modal-title"
         className="w-full max-w-md max-h-[85vh] overflow-y-auto no-scrollbar rounded-2xl border border-border bg-card p-6 shadow-xl"
       >
         {/* Brand */}
@@ -124,7 +126,7 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
         </div>
 
         <DialogHeader className="space-y-2 text-center">
-          <DialogTitle className="text-2xl font-semibold">Create Your Account</DialogTitle>
+          <DialogTitle id="signup-modal-title" className="text-2xl font-semibold">Create Your Account</DialogTitle>
           <p className="text-xs text-muted-foreground">
             Connect with top mentors, investors, and talent in the North.
           </p>

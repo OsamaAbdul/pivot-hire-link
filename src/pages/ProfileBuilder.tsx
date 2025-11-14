@@ -270,12 +270,19 @@ export default function ProfileBuilder() {
 
               <div className="space-y-2">
                 <Label htmlFor="availability">Availability</Label>
-                <Input
-                  id="availability"
+                <Select
                   value={form.availability}
-                  onChange={(e) => setForm({ ...form, availability: e.target.value })}
-                  placeholder="Available, Not available, Part-time"
-                />
+                  onValueChange={(value) => setForm({ ...form, availability: value })}
+                >
+                  <SelectTrigger id="availability">
+                    <SelectValue placeholder="Select availability" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Available">Available</SelectItem>
+                    <SelectItem value="Not available">Not available</SelectItem>
+                    <SelectItem value="Part-time">Part-time</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
             </CardContent>
             <CardFooter className="flex justify-between">

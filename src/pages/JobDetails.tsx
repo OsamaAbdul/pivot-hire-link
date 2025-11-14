@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -14,14 +14,53 @@ import { getJobById, JOBS } from "@/lib/jobs-data";
 import LoginModal from "@/components/auth/LoginModal";
 import SignupModal from "@/components/auth/SignupModal";
 import { toast } from "sonner";
-import { Bookmark, Building2, MapPin, Briefcase, Clock, FileUp, Loader2 } from "lucide-react";
+import { Bookmark, MapPin, Briefcase, Clock, FileUp, Loader2 } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 
 type UploadFile = { file?: File | null; name?: string };
+
+type DbJob = {
+  id: string;
+  title: string;
+  description: string | null;
+  job_type: "full_time" | "part_time" | "contract" | "freelance" | null;
+  location: string | null;
+  remote_allowed: boolean | null;
+  salary_range: string | null;
+  experience_required: string | null; // entry | mid | senior
+  required_skills: string[] | null;
+  created_at: string | null;
+  profiles?: {
+    recruiter_profiles?: Array<{ company_name?: string | null }>
+  } | null;
+};
+
+function mapDbType(t: DbJob["job_type"]): "Full-time" | "Part-time" | "Contract" {
+  switch (t) {
+    case "full_time":
+      return "Full-time";
+    case "part_time":
+      return "Part-time";
+    case "contract":
+    case "freelance":
+    default:
+      return "Contract";
+  }
+}
+
+function mapExperience(exp: string | null | undefined): "Entry" | "Mid" | "Senior" | undefined {
+  if (!exp) return undefined;
+  const e = exp.toLowerCase();
+  if (e.startsWith("entry") || e.startsWith("junior")) return "Entry";
+  if (e.startsWith("mid")) return "Mid";
+  return "Senior";
+}
 
 export default function JobDetails() {
   const navigate = useNavigate();
   const { id } = useParams();
-  const job = useMemo(() => (id ? getJobById(id) : null), [id]);
+  const [job, setJob] = useState<ReturnType<typeof getJobById> | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const { status } = useSession();
 
   const [showAuthChoice, setShowAuthChoice] = useState(false);
@@ -34,6 +73,83 @@ export default function JobDetails() {
   const [coverLetter, setCoverLetter] = useState("");
   const [answer, setAnswer] = useState("");
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const run = async () => {
+      if (!id) {
+        setJob(null);
+        setLoading(false);
+        return;
+      }
+
+      // Try DB first
+      try {
+        const { data, error } = await supabase
+          .from("jobs")
+          .select(
+            `*, profiles:recruiter_id ( recruiter_profiles!recruiter_profiles_user_id_fkey (company_name) )`
+          )
+          .eq("id", id)
+          .maybeSingle();
+
+        if (!error && data) {
+          const r = data as DbJob;
+          const mapped = {
+            id: r.id,
+            title: r.title,
+            company: r.profiles?.recruiter_profiles?.[0]?.company_name || "Company",
+            location: r.location || "—",
+            type: mapDbType(r.job_type),
+            experience: mapExperience(r.experience_required) || "Mid",
+            tags: (r.required_skills || []) as string[],
+            summary: r.description || "",
+            description: r.description || undefined,
+            responsibilities: undefined,
+            requirements: undefined,
+            preferred: undefined,
+            salaryRange: r.salary_range || undefined,
+            officePolicy: r.remote_allowed ? "Remote" : "Onsite",
+            applyBy: undefined,
+          };
+          if (!cancelled) {
+            setJob(mapped as any);
+            setLoading(false);
+          }
+          return;
+        }
+      } catch {
+        // ignore and fallback
+      }
+
+      // Fallback to static dataset
+      const staticJob = getJobById(id);
+      if (!cancelled) {
+        setJob(staticJob || null);
+        setLoading(false);
+      }
+    };
+    run();
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <main className="container mx-auto px-6 py-12">
+          <Card>
+            <CardContent className="p-6">
+              <p className="text-muted-foreground">Loading job details…</p>
+            </CardContent>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!job) {
     return (
@@ -95,10 +211,10 @@ export default function JobDetails() {
   ];
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
 
-      <main className="container mx-auto px-6 py-8">
+      <main className="container mx-auto px-6 py-8 flex-1">
         <div className="flex flex-col lg:flex-row gap-6">
           {/* Main content */}
           <section className="flex-1 space-y-6">
@@ -191,18 +307,6 @@ export default function JobDetails() {
                     <span className="font-medium">{row.value}</span>
                   </div>
                 ))}
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-md bg-muted/40 flex items-center justify-center">
-                  <Building2 className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-medium">{job.company}</p>
-                  <p className="text-xs text-muted-foreground">View Company Profile</p>
-                </div>
               </CardContent>
             </Card>
           </aside>

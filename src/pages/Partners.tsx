@@ -42,9 +42,10 @@ const LogoMark = () => (
 
 const Partners = () => {
   return (
-    <div className="dark min-h-screen bg-background text-foreground">
+    <div className="dark min-h-screen bg-background text-foreground flex flex-col">
       <Navbar />
 
+      <main className="flex-1">
       {/* Header */}
       <section className="container mx-auto px-6 pt-14 md:pt-20 text-center">
         <h1 className="font-sans font-extrabold tracking-tight text-5xl md:text-6xl">
@@ -72,6 +73,8 @@ const Partners = () => {
           ))}
         </div>
       </section>
+
+      </main>
 
       <Footer />
     </div>
