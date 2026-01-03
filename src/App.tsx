@@ -18,6 +18,7 @@ import Terms from "./pages/Terms";
 import PartnerApply from "./pages/PartnerApply";
 import Jobs from "./pages/Jobs";
 import JobDetails from "./pages/JobDetails";
+import Admin from "./pages/Admin";
 import { SessionProvider } from "@/hooks/useSessionManager";
 import RequireAuth from "@/components/auth/RequireAuth";
 
@@ -42,6 +43,7 @@ const App = () => (
           <Route path="/jobs" element={<Jobs />} />
           <Route path="/jobs/:id" element={<JobDetails />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/profile/build" element={<RequireAuth><ProfileBuilder /></RequireAuth>} />
           <Route path="/recruiter/build" element={<RequireAuth><RecruiterOnboarding /></RequireAuth>} />
           <Route path="/dashboard" element={<RequireAuth><Dashboard /></RequireAuth>} />

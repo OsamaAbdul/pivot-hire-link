@@ -1,4 +1,4 @@
 VITE_SUPABASE_PROJECT_ID="aeuasudckdbhcazdaywk"
 VITE_SUPABASE_PUBLISHABLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFldWFzdWRja2RiaGNhemRheXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0MzMyNzgsImV4cCI6MjA3ODAwOTI3OH0.mb7Bs_WQ1-g6z97eJy86Hi2yRpEY5fCQqoPZ-JDn0bQ"
 VITE_SUPABASE_URL="https://aeuasudckdbhcazdaywk.supabase.co"
-VITE_REDIRECT_URL="http://localhost:8081/dashboard"
+VITE_REDIRECT_URL="http://localhost:8080/dashboard"

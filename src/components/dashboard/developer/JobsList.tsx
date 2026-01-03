@@ -1,8 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious, PaginationEllipsis } from "@/components/ui/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -20,6 +22,8 @@ const JobsList = ({ developerId }: JobsListProps) => {
   const [coverLetter, setCoverLetter] = useState("");
   const [applying, setApplying] = useState(false);
   const [appliedJobIds, setAppliedJobIds] = useState<Set<string>>(new Set());
+  const PAGE_SIZE = 6;
+  const [page, setPage] = useState<number>(1);
 
   useEffect(() => {
     fetchJobs();
@@ -102,13 +106,53 @@ const JobsList = ({ developerId }: JobsListProps) => {
     return type.split("_").map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
   };
 
+  // Pagination derived values
+  const totalPages = useMemo(() => Math.max(1, Math.ceil(jobs.length / PAGE_SIZE)), [jobs.length]);
+  const paged = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return jobs.slice(start, start + PAGE_SIZE);
+  }, [jobs, page]);
+
+  useEffect(() => {
+    // Reset/clamp page when jobs change
+    setPage((p) => Math.min(p, Math.max(1, Math.ceil(jobs.length / PAGE_SIZE))));
+  }, [jobs.length]);
+
+  useEffect(() => {
+    const el = document.getElementById("dev-jobs-grid");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [page]);
+
   if (loading) {
-    return <div className="text-center py-8">Loading jobs...</div>;
+    return (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {Array.from({ length: PAGE_SIZE }).map((_, i) => (
+          <Card key={i}>
+            <CardHeader className="p-4 pb-3">
+              <Skeleton className="h-4 w-40" />
+            </CardHeader>
+            <CardContent className="p-4 pt-0 space-y-3">
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-3/4" />
+              <Skeleton className="h-9 w-full" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
   }
 
   return (
     <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div
+        id="dev-jobs-grid"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 animate-in fade-in slide-in-from-bottom-2 duration-300"
+        key={page}
+        aria-live="polite"
+        aria-busy={loading ? "true" : "false"}
+      >
         {jobs.length === 0 ? (
           <Card>
             <CardContent className="py-8 text-center text-muted-foreground">
@@ -116,7 +160,7 @@ const JobsList = ({ developerId }: JobsListProps) => {
             </CardContent>
           </Card>
         ) : (
-          jobs.map((job) => (
+          paged.map((job) => (
             <Card
               key={job.id}
               className="transition-shadow transition-transform duration-200 hover:shadow-lg hover:-translate-y-0.5"
@@ -178,6 +222,93 @@ const JobsList = ({ developerId }: JobsListProps) => {
           ))
         )}
       </div>
+
+      {/* Pagination */}
+      {jobs.length > PAGE_SIZE && (
+        <div className="mt-6">
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
+              Showing {(page - 1) * PAGE_SIZE + 1}-{Math.min(page * PAGE_SIZE, jobs.length)} of {jobs.length} jobs
+            </p>
+            <p className="text-sm" aria-label={`Current page ${page} of ${totalPages}`}>Page {page} / {totalPages}</p>
+          </div>
+          <Pagination aria-label="Jobs pagination">
+            <PaginationContent aria-controls="dev-jobs-grid">
+              <PaginationItem>
+                <PaginationPrevious
+                  href="#"
+                  aria-label="Previous page"
+                  aria-disabled={page === 1}
+                  onClick={(e) => { e.preventDefault(); setPage((p) => Math.max(1, p - 1)); }}
+                />
+              </PaginationItem>
+              {(() => {
+                const windowSize = 5;
+                let start = Math.max(1, page - Math.floor(windowSize / 2));
+                let end = start + windowSize - 1;
+                if (end > totalPages) {
+                  end = totalPages;
+                  start = Math.max(1, end - windowSize + 1);
+                }
+
+                const items: JSX.Element[] = [];
+                if (start > 1) {
+                  items.push(
+                    <PaginationItem key={1}>
+                      <PaginationLink
+                        href="#"
+                        aria-label="Go to page 1"
+                        aria-current={page === 1 ? "page" : undefined}
+                        isActive={page === 1}
+                        onClick={(e) => { e.preventDefault(); setPage(1); }}
+                      >1</PaginationLink>
+                    </PaginationItem>
+                  );
+                  if (start > 2) items.push(<PaginationItem key="start-ellipsis"><PaginationEllipsis /></PaginationItem>);
+                }
+
+                for (let n = start; n <= end; n++) {
+                  items.push(
+                    <PaginationItem key={n}>
+                      <PaginationLink
+                        href="#"
+                        aria-label={`Go to page ${n}`}
+                        aria-current={page === n ? "page" : undefined}
+                        isActive={page === n}
+                        onClick={(e) => { e.preventDefault(); setPage(n); }}
+                      >{n}</PaginationLink>
+                    </PaginationItem>
+                  );
+                }
+
+                if (end < totalPages) {
+                  if (end < totalPages - 1) items.push(<PaginationItem key="end-ellipsis"><PaginationEllipsis /></PaginationItem>);
+                  items.push(
+                    <PaginationItem key={totalPages}>
+                      <PaginationLink
+                        href="#"
+                        aria-label={`Go to page ${totalPages}`}
+                        aria-current={page === totalPages ? "page" : undefined}
+                        isActive={page === totalPages}
+                        onClick={(e) => { e.preventDefault(); setPage(totalPages); }}
+                      >{totalPages}</PaginationLink>
+                    </PaginationItem>
+                  );
+                }
+                return items;
+              })()}
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  aria-label="Next page"
+                  aria-disabled={page === totalPages}
+                  onClick={(e) => { e.preventDefault(); setPage((p) => Math.min(totalPages, p + 1)); }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
       <Dialog open={!!selectedJob} onOpenChange={() => setSelectedJob(null)}>
         <DialogContent className="max-w-2xl">

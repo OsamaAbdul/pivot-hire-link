@@ -304,10 +304,10 @@ export type Database = {
         Returns: boolean
       }
     }
-    Enums: {
+     Enums: {
       application_status: "pending" | "approved" | "rejected"
       job_type: "full_time" | "part_time" | "contract" | "freelance"
-      user_role: "developer" | "recruiter"
+       user_role: "developer" | "recruiter" | "admin"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -437,7 +437,7 @@ export const Constants = {
     Enums: {
       application_status: ["pending", "approved", "rejected"],
       job_type: ["full_time", "part_time", "contract", "freelance"],
-      user_role: ["developer", "recruiter"],
+      user_role: ["developer", "recruiter", "admin"],
     },
   },
 } as const
