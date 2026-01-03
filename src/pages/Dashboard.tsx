@@ -55,17 +55,24 @@ const Dashboard = () => {
 
       if (error) throw error;
 
-      // Fetch user role from user_roles table
-      const { data: roleData } = await supabase
+      // Fetch all user roles and resolve a primary role deterministically
+      const { data: rolesList } = await supabase
         .from("user_roles")
         .select("role")
-        .eq("user_id", session.user.id)
-        .maybeSingle();
+        .eq("user_id", session.user.id);
 
-      setProfile({ ...profileData, role: roleData?.role });
+      const roles = Array.isArray(rolesList) ? rolesList.map((r) => r.role) : [];
+      // Precedence: developer > recruiter; admin handled via RequireAdmin route
+      const primaryRole = roles.includes("developer")
+        ? "developer"
+        : roles.includes("recruiter")
+        ? "recruiter"
+        : undefined;
+
+      setProfile({ ...profileData, role: primaryRole });
 
       // If developer, enforce profile completion before allowing dashboard access
-      if (roleData?.role === "developer") {
+      if (primaryRole === "developer") {
         const { data: devProfile } = await supabase
           .from("developer_profiles")
           .select("*")
@@ -91,7 +98,7 @@ const Dashboard = () => {
       }
 
       // If recruiter, enforce onboarding completeness before allowing dashboard access
-      if (roleData?.role === "recruiter") {
+      if (primaryRole === "recruiter") {
         const { data: recProfile } = await supabase
           .from("recruiter_profiles")
           .select("*")

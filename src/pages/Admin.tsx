@@ -31,15 +31,6 @@ type Recruiter = {
   company_size: string | null;
 };
 
-type Partner = {
-  id: string;
-  company: string;
-  contact_person: string;
-  email: string;
-  partnership_type: string;
-  created_at: string;
-};
-
 const PAGE_SIZE = 6;
 
 function usePaginator<T>(items: T[]) {
@@ -72,7 +63,6 @@ export default function Admin() {
   const [loading, setLoading] = useState(true);
   const [talents, setTalents] = useState<Profile[]>([]);
   const [recruiters, setRecruiters] = useState<Recruiter[]>([]);
-  const [partners, setPartners] = useState<Partner[]>([]);
   const [search, setSearch] = useState("");
   const [selection, setSelection] = useState<Record<string, boolean>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -93,14 +83,8 @@ export default function Admin() {
     return (r.company_name?.toLowerCase().includes(q) || (r.industry || "").toLowerCase().includes(q));
   }), [recruiters, search]);
 
-  const filteredPartners = useMemo(() => partners.filter((p) => {
-    const q = search.toLowerCase();
-    return (p.company.toLowerCase().includes(q) || p.email.toLowerCase().includes(q) || p.partnership_type.toLowerCase().includes(q));
-  }), [partners, search]);
-
   const talentsPager = usePaginator(filteredTalents);
   const recruitersPager = usePaginator(filteredRecruiters);
-  const partnersPager = usePaginator(filteredPartners);
 
   useEffect(() => {
     (async () => {
@@ -109,8 +93,6 @@ export default function Admin() {
         setTalents(profs || []);
         const { data: recs } = await supabase.from("recruiter_profiles").select("user_id, company_name, industry, company_size");
         setRecruiters(recs || []);
-        const { data: parts } = await supabase.from("partner_applications").select("id, company, contact_person, email, partnership_type, created_at");
-        setPartners(parts || []);
       } catch (err: any) {
         toast.error("Failed to load admin data");
       } finally {
@@ -160,7 +142,6 @@ export default function Admin() {
       selectedIds,
       talents: talents.filter((t) => selectedIds.includes(t.id)),
       recruiters: recruiters.filter((r) => selectedIds.includes(r.user_id)),
-      partners: partners.filter((p) => selectedIds.includes(p.id)),
     };
     const blob = new Blob([JSON.stringify(snapshot, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -267,7 +248,7 @@ export default function Admin() {
 
             <TabsContent value="users" className="space-y-8">
               <div className="flex items-center gap-3">
-                <Input placeholder="Search users, companies, partners..." value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
+                <Input placeholder="Search users, companies..." value={search} onChange={(e) => setSearch(e.target.value)} aria-label="Search" />
                 <Badge>Delete rate: {canDelete ? "OK" : "Limited"}</Badge>
               </div>
 
@@ -349,46 +330,6 @@ export default function Admin() {
                     <div className="mt-3 flex items-center justify-between">
                       <p className="text-sm text-muted-foreground">Showing {(recruitersPager.page - 1) * PAGE_SIZE + 1}-{Math.min(recruitersPager.page * PAGE_SIZE, filteredRecruiters.length)} of {filteredRecruiters.length}</p>
                       {renderPaginator(recruitersPager.page, recruitersPager.totalPages, recruitersPager.setPage, "recruiters-grid")}
-                    </div>
-                  </CardContent>
-                </Card>
-              </section>
-
-              {/* Partners */}
-              <section aria-label="Partners">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Partners</CardTitle>
-                    <CardDescription>Partner accounts (from applications)</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div id="partners-grid" className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead></TableHead>
-                            <TableHead>Company</TableHead>
-                            <TableHead>Contact</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Type</TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          {partnersPager.paged.map((p) => (
-                            <TableRow key={p.id}>
-                              <TableCell><Checkbox checked={!!selection[p.id]} onCheckedChange={(v) => toggleSelection(p.id, Boolean(v))} /></TableCell>
-                              <TableCell>{p.company}</TableCell>
-                              <TableCell>{p.contact_person}</TableCell>
-                              <TableCell>{p.email}</TableCell>
-                              <TableCell><Badge variant="outline">{p.partnership_type}</Badge></TableCell>
-                            </TableRow>
-                          ))}
-                        </TableBody>
-                      </Table>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between">
-                      <p className="text-sm text-muted-foreground">Showing {(partnersPager.page - 1) * PAGE_SIZE + 1}-{Math.min(partnersPager.page * PAGE_SIZE, filteredPartners.length)} of {filteredPartners.length}</p>
-                      {renderPaginator(partnersPager.page, partnersPager.totalPages, partnersPager.setPage, "partners-grid")}
                     </div>
                   </CardContent>
                 </Card>

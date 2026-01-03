@@ -10,7 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, Edit, Trash2 } from "lucide-react";
+import { Plus, Edit, Trash2, FileText } from "lucide-react";
+import ApplicationsManager from "./ApplicationsManager";
 
 interface JobManagementProps {
   recruiterId: string;
@@ -22,6 +23,7 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<any>(null);
+  const [applicationsJobId, setApplicationsJobId] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<{
     title: string;
@@ -415,6 +417,9 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
                     </div>
                   </div>
                   <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => setApplicationsJobId(job.id)} title="View Applications">
+                      <FileText className="h-4 w-4" />
+                    </Button>
                     <Button size="sm" variant="outline" onClick={() => handleEdit(job)}>
                       <Edit className="h-4 w-4" />
                     </Button>
@@ -444,8 +449,20 @@ const JobManagement = ({ recruiterId, onUpdate }: JobManagementProps) => {
           ))
         )}
       </div>
+
+      <Dialog open={!!applicationsJobId} onOpenChange={(open) => !open && setApplicationsJobId(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Job Applications</DialogTitle>
+          </DialogHeader>
+          {applicationsJobId && (
+            <ApplicationsManager recruiterId={recruiterId} jobId={applicationsJobId} />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
 
 export default JobManagement;
+

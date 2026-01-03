@@ -72,7 +72,7 @@ const About = () => {
           <PillarCard
             icon={Rocket}
             title="Accelerate"
-            description="Fast‑tracking career and company growth by creating direct pathways to funding, opportunities, and strategic partnerships."
+            description="Fast‑tracking career and company growth by creating direct pathways to funding, opportunities, and strategic collaborations."
           />
         </div>
       </section>

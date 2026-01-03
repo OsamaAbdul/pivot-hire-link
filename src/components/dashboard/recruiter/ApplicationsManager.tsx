@@ -9,28 +9,36 @@ import { CheckCircle, XCircle, Clock } from "lucide-react";
 
 interface ApplicationsManagerProps {
   recruiterId: string;
+  jobId?: string;
 }
 
-const ApplicationsManager = ({ recruiterId }: ApplicationsManagerProps) => {
+const ApplicationsManager = ({ recruiterId, jobId }: ApplicationsManagerProps) => {
   const [applications, setApplications] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterStatus, setFilterStatus] = useState<string>("all");
 
   useEffect(() => {
     fetchApplications();
-  }, [recruiterId]);
+  }, [recruiterId, jobId]);
 
   const fetchApplications = async () => {
     try {
-      const { data: jobs } = await supabase
-        .from("jobs")
-        .select("id")
-        .eq("recruiter_id", recruiterId);
+      let jobIds: string[] = [];
+      
+      if (jobId) {
+        jobIds = [jobId];
+      } else {
+        const { data: jobs } = await supabase
+          .from("jobs")
+          .select("id")
+          .eq("recruiter_id", recruiterId);
 
-      if (!jobs || jobs.length === 0) {
-        setApplications([]);
-        setLoading(false);
-        return;
+        if (!jobs || jobs.length === 0) {
+          setApplications([]);
+          setLoading(false);
+          return;
+        }
+        jobIds = jobs.map((j) => j.id);
       }
 
       const { data, error } = await supabase
@@ -40,16 +48,16 @@ const ApplicationsManager = ({ recruiterId }: ApplicationsManagerProps) => {
           jobs:job_id (title, job_type),
           profiles:developer_id (
             full_name,
-            email
-          ),
-          developer_profiles:developer_profiles!developer_profiles_user_id_fkey (
-            skills,
-            specialization,
-            experience_level,
-            resume_url
+            email,
+            developer_profiles (
+              skills,
+              specialization,
+              experience_level,
+              resume_url
+            )
           )
         `)
-        .in("job_id", jobs.map((j) => j.id))
+        .in("job_id", jobIds)
         .order("applied_at", { ascending: false });
 
       if (error) throw error;
@@ -156,23 +164,23 @@ const ApplicationsManager = ({ recruiterId }: ApplicationsManagerProps) => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {app.developer_profiles?.[0] && (
+                {app.profiles?.developer_profiles?.[0] && (
                   <div className="space-y-2">
                     <div className="flex gap-2 text-sm text-muted-foreground">
-                      {app.developer_profiles[0].specialization && (
-                        <span>{app.developer_profiles[0].specialization}</span>
+                      {app.profiles.developer_profiles[0].specialization && (
+                        <span>{app.profiles.developer_profiles[0].specialization}</span>
                       )}
-                      {app.developer_profiles[0].experience_level && (
+                      {app.profiles.developer_profiles[0].experience_level && (
                         <>
                           <span>•</span>
-                          <span>{app.developer_profiles[0].experience_level}</span>
+                          <span>{app.profiles.developer_profiles[0].experience_level}</span>
                         </>
                       )}
                     </div>
 
-                    {app.developer_profiles[0].skills && (
+                    {app.profiles.developer_profiles[0].skills && (
                       <div className="flex flex-wrap gap-2">
-                        {app.developer_profiles[0].skills.map((skill: string) => (
+                        {app.profiles.developer_profiles[0].skills.map((skill: string) => (
                           <Badge key={skill} variant="outline">
                             {skill}
                           </Badge>

@@ -79,28 +79,21 @@ export default function SignupModal({ open, onOpenChange }: SignupModalProps) {
         email,
         password,
         options: {
-          data: { full_name: fullName },
-          emailRedirectTo: `${window.location.origin}/`,
+          data: {
+            full_name: fullName,
+            role: roleDB,
+          },
         },
       });
+
       if (error) throw error;
 
-      if (data.user) {
-        // Insert role into user_roles table
-        const { error: roleError } = await supabase
-          .from("user_roles")
-          .insert({ user_id: data.user.id, role: roleDB });
-        if (roleError) throw roleError;
-
-        // Update profile with full name
-        const { error: profileError } = await supabase
-          .from("profiles")
-          .update({ full_name: fullName })
-          .eq("id", data.user.id);
-        if (profileError) throw profileError;
-      }
-
+      // Role insertion is now handled by the database trigger based on metadata
+      // This prevents issues where the user isn't fully authenticated yet (e.g. email confirmation)
+      
+      toast.success("Account created successfully! Please sign in.");
       onOpenChange(false);
+      
       // After signup, direct users to login via the route-driven modal
       navigate("/auth");
     } catch (err: any) {

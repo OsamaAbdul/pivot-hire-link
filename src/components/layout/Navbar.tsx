@@ -82,7 +82,6 @@ const Navbar = () => {
                 <Link to="/" className="hover:text-foreground">Home</Link>
                 <Link to="/jobs" className="hover:text-foreground">Jobs</Link>
                 <Link to="/about" className="hover:text-foreground">About Us</Link>
-                <Link to="/partners" className="hover:text-foreground">Partners</Link>
                 <button onClick={() => setLoginOpen(true)} className="hover:text-foreground">Login</button>
                 <Button size="sm" className="ml-2" onClick={() => setSignupOpen(true)}>Apply Now</Button>
               </>
@@ -160,9 +159,6 @@ const Navbar = () => {
                   </Link>
                   <Link to="/about" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
                     About Us
-                  </Link>
-                  <Link to="/partners" className="px-3 py-2 rounded hover:bg-muted/20" onClick={() => setMobileOpen(false)}>
-                    Partners
                   </Link>
                   <button
                     className="mt-2 px-3 py-2 text-left rounded hover:bg-muted/20"
