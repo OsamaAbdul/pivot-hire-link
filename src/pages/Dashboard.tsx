@@ -61,7 +61,13 @@ const Dashboard = () => {
         .select("role")
         .eq("user_id", session.user.id);
 
-      const roles = Array.isArray(rolesList) ? rolesList.map((r) => r.role) : [];
+      let roles = Array.isArray(rolesList) ? rolesList.map((r) => r.role) : [];
+      
+      // Fallback: Check metadata if no roles in DB (e.g. fresh signup)
+      if (roles.length === 0 && session.user.user_metadata?.role) {
+        roles = [session.user.user_metadata.role];
+      }
+
       // Precedence: developer > recruiter; admin handled via RequireAdmin route
       const primaryRole = roles.includes("developer")
         ? "developer"

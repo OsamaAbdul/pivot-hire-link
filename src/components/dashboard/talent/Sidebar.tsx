@@ -21,7 +21,9 @@ export default function Sidebar({ active, onSelect, inMobile = false }: SidebarP
     <aside
       className={cn(
         "bg-sidebar-background/100 text-sidebar-foreground border-sidebar-border p-3",
-        inMobile ? "block w-full border-0" : "w-[240px] shrink-0 border-r hidden md:block",
+        inMobile
+          ? "block w-full border-0"
+          : "w-[240px] shrink-0 border-r hidden md:block sticky top-[81px] h-[calc(100vh-81px)] overflow-y-auto"
       )}
       aria-label="Dashboard navigation"
     >

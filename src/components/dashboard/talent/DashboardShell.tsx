@@ -21,10 +21,10 @@ export default function DashboardShell({ active, onSelect, children, rightAside 
     <div className="flex gap-0">
       <Sidebar active={active} onSelect={onSelect} />
       <main className="flex-1 min-h-[calc(100vh-160px)]">
-        {/* Mobile hamburger anchored left and sticky */}
-        <div className="md:hidden sticky top-2 z-30 px-3 flex items-center justify-start">
+        {/* Top sticky header */}
+        <div className="sticky top-[81px] z-30 bg-background/95 backdrop-blur px-4 py-4 md:px-6 md:py-6 shadow-sm flex items-center gap-3">
           <button
-            className="inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted/20 focus:outline-none focus:ring-2 focus:ring-ring"
+            className="md:hidden inline-flex items-center justify-center rounded-md p-2 text-muted-foreground hover:text-foreground hover:bg-muted/20 focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label="Open sidebar menu"
             aria-controls="dashboard-mobile-menu"
             aria-expanded={mobileOpen}
@@ -32,11 +32,8 @@ export default function DashboardShell({ active, onSelect, children, rightAside 
           >
             {mobileOpen ? <X className="h-6 w-6" aria-hidden="true" /> : <Menu className="h-6 w-6" aria-hidden="true" />}
           </button>
-        </div>
 
-        {/* Top search bar */}
-        <div className="px-6 pt-6">
-          <div className="rounded-md bg-card border border-border p-3">
+          <div className="flex-1 rounded-md bg-card border border-border p-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" aria-hidden="true" />
               <Input

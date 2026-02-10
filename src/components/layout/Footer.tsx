@@ -7,7 +7,7 @@ const Footer = () => {
     <footer className="nf-footer" role="contentinfo">
       <div className="container mx-auto px-6">
         <div className="nf-wrap">
-          <p className="nf-copy">© 2024 Northern Founders Community. All rights reserved.</p>
+          <p className="nf-copy">© {new Date().getFullYear()} Northern Founders Community. All rights reserved.</p>
           <nav aria-label="Footer navigation">
             <div className="nf-group" aria-label="Social links">
               <a href="https://www.nfcommunity.com.ng/" target="_blank" rel="noopener noreferrer" aria-label="Northern Founders Community Website">
